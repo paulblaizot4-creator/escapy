@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escapy — Le guide touristique personnalisé pour vos clients</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sky:#7CC1E7;
+  --sand:#F2D17E;
+  --sage:#ACAD79;
+  --forest:#43593B;
+  --bark:#58402E;
+  --white:#FFFFFF;
+  --off:#F8F7F4;
+  --dark:#1A1A18;
+  --mid:#7A7A70;
+  --border:#E5E3DC;
+  --navy:#1A2332;
+  --cream:#FAF8F3;
+  --r:12px;
+  --sh:0 2px 20px rgba(26,35,50,0.07);
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--dark);line-height:1.7;font-size:15px}
+a{text-decoration:none;color:inherit;cursor:pointer}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 4rem;border-bottom:1px solid var(--border);background:rgba(255,255,255,0.97);position:sticky;top:0;z-index:100;backdrop-filter:blur(8px)}
+.logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;letter-spacing:.02em;color:var(--dark)}
+.logo span{color:var(--forest)}
+.nav-links{display:flex;gap:2.5rem;font-size:13px;color:var(--mid);font-weight:400}
+.nav-links a{cursor:pointer;transition:color .2s}.nav-links a:hover{color:var(--dark)}
+.btn-nav{font-size:13px;padding:9px 22px;border:1px solid var(--forest);background:var(--forest);color:var(--white);cursor:pointer;border-radius:4px;font-family:'DM Sans',sans-serif;font-weight:500;transition:all .2s}
+.btn-nav:hover{background:var(--dark);border-color:var(--dark)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
+.hamburger span{width:22px;height:1.5px;background:var(--dark);border-radius:2px;transition:all .3s;display:block}
+.mobile-menu{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--white);z-index:200;flex-direction:column;align-items:center;justify-content:center;gap:2rem}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--dark);cursor:pointer}
+.mobile-menu .close-btn{position:absolute;top:1.5rem;right:1.5rem;font-size:24px;cursor:pointer;color:var(--mid)}
+.mobile-menu .btn-nav-m{font-size:14px;padding:12px 32px;border:1px solid var(--forest);background:var(--forest);color:var(--white);cursor:pointer;border-radius:4px;font-family:'DM Sans',sans-serif;font-weight:500;margin-top:1rem}
+
+/* HERO */
+.hero{padding:8rem 4rem 7rem;max-width:900px;margin:0 auto;text-align:center}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--forest);background:rgba(67,89,59,0.07);border:1px solid rgba(67,89,59,0.2);padding:5px 16px;border-radius:20px;margin-bottom:2rem;font-weight:500}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:var(--forest)}
+h1{font-family:'Cormorant Garamond',serif;font-size:58px;font-weight:300;line-height:1.12;color:var(--dark);margin-bottom:1.5rem;letter-spacing:-.02em}
+h1 em{font-style:italic;color:var(--forest)}
+.hero-sub{font-size:16px;color:var(--mid);max-width:500px;margin:0 auto 2.5rem;line-height:1.8;font-weight:300}
+.ctas{display:flex;justify-content:center;gap:12px}
+.btn-primary{font-size:13px;padding:12px 28px;background:var(--dark);color:var(--white);border:1px solid var(--dark);border-radius:4px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;transition:all .2s}
+.btn-primary:hover{background:var(--forest);border-color:var(--forest)}
+.btn-ghost{font-size:13px;padding:12px 28px;background:transparent;color:var(--dark);border:1px solid var(--border);border-radius:4px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-ghost:hover{border-color:var(--dark)}
+
+/* LOGOS / TRUST */
+.trust-bar{padding:2.5rem 4rem;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--off)}
+.trust-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);text-align:center;margin-bottom:1.5rem;font-weight:500}
+.trust-logos{display:flex;justify-content:center;align-items:center;gap:3rem;flex-wrap:wrap}
+.trust-logo{font-family:'Cormorant Garamond',serif;font-size:15px;color:#bbb;letter-spacing:.05em;font-weight:400}
+
+/* SECTIONS */
+section{padding:6rem 4rem}
+.section-label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--sage);margin-bottom:1rem;font-weight:500}
+h2{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:300;color:var(--dark);margin-bottom:1.5rem;letter-spacing:-.01em;line-height:1.2}
+h2 em{font-style:italic;color:var(--forest)}
+.inner{max-width:900px;margin:0 auto}
+
+/* STEPS */
+.steps-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-top:3rem}
+.step{padding:2.5rem;border-right:1px solid var(--border);position:relative}
+.step:last-child{border-right:none}
+.step-num{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300;color:var(--border);line-height:1;margin-bottom:1.25rem}
+.step h3{font-size:15px;font-weight:500;margin-bottom:.6rem;color:var(--dark)}
+.step p{font-size:13px;color:var(--mid);line-height:1.7}
+
+/* FEATURES - deux accordéons */
+.two-acc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:3rem}
+.acc-block{border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.acc-block-header{padding:1rem 1.5rem;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:500}
+.acc-list{}
+.acc-item{border-bottom:1px solid var(--border)}
+.acc-item:last-child{border-bottom:none}
+.acc-q{width:100%;background:var(--white);border:none;padding:1rem 1.5rem;display:flex;align-items:center;gap:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--dark);cursor:pointer;text-align:left;transition:background .2s}
+.acc-q:hover{background:var(--off)}
+.acc-q-hotel:hover{background:rgba(67,89,59,0.03)}
+.acc-q-client:hover{background:rgba(88,64,46,0.03)}
+.acc-num{font-family:'Cormorant Garamond',serif;font-size:12px;font-weight:400;flex-shrink:0;min-width:18px}
+.acc-num-hotel{color:var(--sage)}
+.acc-num-client{color:var(--sky)}
+.acc-arrow{flex-shrink:0;margin-left:auto;color:var(--mid);transition:transform .25s}
+.acc-item.open .acc-arrow{transform:rotate(180deg)}
+.acc-detail{display:none;padding:.75rem 1.5rem 1rem;font-size:13px;color:var(--mid);line-height:1.7;background:var(--off);border-top:1px solid var(--border);font-weight:300}
+.acc-item.open .acc-detail{display:block}
+
+@media(max-width:768px){.two-acc-grid{grid-template-columns:1fr}}
+
+/* BENEFITS */
+.ben-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem}
+.ben{padding:2rem;border:1px solid var(--border);border-radius:var(--r);background:var(--off)}
+.ben-line{width:24px;height:2px;border-radius:2px;margin-bottom:1.5rem}
+.ben h4{font-size:14px;font-weight:500;margin-bottom:.5rem;color:var(--dark)}
+.ben p{font-size:13px;color:var(--mid);line-height:1.7}
+
+/* DEMO */
+.demo-intro{max-width:560px;margin:0 auto 3.5rem;text-align:center}
+.demo-wrap{max-width:400px;margin:0 auto}
+
+.phone-frame{border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 4px 30px rgba(26,35,50,0.08)}
+.hotel-header{background:var(--forest);padding:20px 20px 16px;text-align:center}
+.h-eyebrow{font-size:9px;letter-spacing:4px;color:rgba(255,255,255,0.4);text-transform:uppercase;margin-bottom:5px}
+.h-name{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--white);font-weight:400;letter-spacing:.02em}
+.gold-rule{width:24px;height:1px;background:rgba(255,255,255,0.25);margin:8px auto}
+.h-sub{font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:1.5px}
+
+.demo-body-wrap{background:var(--off);border-radius:0 0 20px 20px}
+.weather{background:rgba(67,89,59,0.06);padding:9px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.w-left{display:flex;align-items:center;gap:8px}
+.w-icon{font-size:16px}.w-temp{font-size:14px;font-weight:500;color:var(--dark);line-height:1}
+.w-desc{font-size:10px;color:var(--mid);margin-top:1px}
+.w-right{font-size:10px;color:var(--forest);text-align:right;line-height:1.4;font-weight:500}
+
+.d-container{padding:0 12px 28px}
+.d-screen{display:none}.d-screen.active{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.progress-wrap{margin:14px 0 10px}
+/* DEMO - couleurs harmonisées avec le site */
+.progress-label{display:flex;justify-content:space-between;font-size:10px;color:var(--mid);margin-bottom:5px}
+.progress-bar{height:1.5px;background:var(--border);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;background:var(--forest);border-radius:99px;transition:width .4s ease}
+
+.d-card{background:var(--white);border-radius:8px;padding:16px;margin-bottom:10px;border:1px solid var(--border)}
+.q-step{font-size:9px;color:var(--sage);letter-spacing:2px;text-transform:uppercase;font-weight:500;margin-bottom:6px}
+.q-text{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--dark);line-height:1.35;margin-bottom:4px;font-weight:400}
+.q-hint{font-size:11px;color:var(--mid);margin-bottom:14px;line-height:1.5}
+
+.lang-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px}
+.lang-btn{background:var(--off);border:1px solid var(--border);border-radius:6px;padding:10px 4px;text-align:center;cursor:pointer;transition:all .2s}
+.lang-btn:hover,.lang-btn.sel{border-color:var(--forest);background:rgba(67,89,59,0.04)}
+.lang-flag{font-size:16px;display:block;margin-bottom:2px}.lang-label{font-size:11px;font-weight:500;color:var(--dark)}
+
+.opts-2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.opts-3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.opt{background:var(--off);border:1px solid var(--border);border-radius:6px;padding:10px 8px;text-align:center;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
+.opt:hover{border-color:var(--sage)}.opt.sel{border-color:var(--forest);background:rgba(67,89,59,0.04)}
+.opt-icon{width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:var(--mid)}.opt-icon svg{width:16px;height:16px}
+.opt.sel .opt-icon{color:var(--forest)}
+.opt-label{font-size:11px;font-weight:500;line-height:1.3;color:var(--dark)}.opt-sub{font-size:10px;color:var(--mid)}
+.opt .chk{position:absolute;top:5px;right:5px;width:13px;height:13px;border-radius:50%;background:var(--forest);display:none;align-items:center;justify-content:center;font-size:7px;color:var(--white);font-weight:700}
+.opt.sel .chk{display:flex}
+
+.dur-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.dur-btn{background:var(--off);border:1px solid var(--border);border-radius:6px;padding:8px 3px;text-align:center;cursor:pointer;transition:all .2s}
+.dur-btn:hover,.dur-btn.sel{border-color:var(--forest);background:rgba(67,89,59,0.04)}
+.dur-num{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--dark);line-height:1}
+.dur-label{font-size:9px;color:var(--mid)}
+
+.date-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.date-field label{font-size:9px;color:var(--mid);display:block;margin-bottom:3px;font-weight:500;letter-spacing:.08em;text-transform:uppercase}
+.date-field input{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--dark);background:var(--off);outline:none}
+.date-field input:focus{border-color:var(--forest)}
+
+.moment-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
+.moment-btn{background:var(--off);border:1px solid var(--border);border-radius:6px;padding:10px 8px;text-align:center;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:3px}
+.moment-btn:hover,.moment-btn.sel{border-color:var(--forest);background:rgba(67,89,59,0.04)}
+.moment-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:var(--mid)}.moment-icon svg{width:16px;height:16px}
+.moment-btn.sel .moment-icon{color:var(--forest)}
+.moment-label{font-size:11px;font-weight:500;color:var(--dark)}.moment-sub{font-size:9px;color:var(--mid)}
+
+.unavail-wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.unavail-btn{background:var(--off);border:1px solid var(--border);border-radius:6px;padding:6px 3px;text-align:center;cursor:pointer;font-size:10px;font-weight:500;color:var(--dark);transition:all .2s}
+.unavail-btn.sel{border-color:var(--forest);background:rgba(67,89,59,0.04);color:var(--forest)}
+
+.interests-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.int-btn{background:var(--off);border:1px solid var(--border);border-radius:6px;padding:9px 8px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px;position:relative}
+.int-btn:hover{border-color:var(--sage)}.int-btn.sel{border-color:var(--forest);background:rgba(67,89,59,0.04)}
+.int-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:var(--mid);flex-shrink:0}.int-icon svg{width:15px;height:15px}
+.int-btn.sel .int-icon{color:var(--forest)}
+.int-label{font-size:11px;font-weight:500;color:var(--dark)}.int-sub{font-size:9px;color:var(--mid)}
+.int-chk{width:13px;height:13px;border-radius:50%;background:var(--forest);display:none;align-items:center;justify-content:center;font-size:7px;color:var(--white);font-weight:700;flex-shrink:0;margin-left:auto}
+.int-btn.sel .int-chk{display:flex}
+.sel-count{font-size:11px;color:var(--mid);margin-top:8px;text-align:center;min-height:14px}
+
+.d-btn-primary{width:100%;padding:11px;background:var(--forest);border:none;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--white);cursor:pointer;transition:all .2s;margin-top:6px}
+.d-btn-primary:hover{background:var(--dark)}
+.d-btn-primary:disabled{opacity:.3;cursor:not-allowed}
+.d-btn-secondary{width:100%;padding:9px;background:transparent;border:1px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--mid);cursor:pointer;margin-top:6px;transition:all .2s}
+
+.d-hero{background:var(--forest);border-radius:8px;padding:18px 16px;text-align:center;margin:14px 0 10px}
+.d-hero-emoji{font-size:26px;margin-bottom:6px;display:block}
+.d-hero-title{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--white);margin-bottom:4px;font-weight:400;letter-spacing:.01em}
+.d-hero-sub{font-size:11px;color:rgba(255,255,255,0.5);line-height:1.6}
+
+.rgpd{background:var(--off);border-radius:6px;padding:8px 12px;display:flex;gap:6px;align-items:flex-start;margin-top:8px;border:1px solid var(--border)}
+.rgpd-text{font-size:10px;color:var(--mid);line-height:1.5}
+
+.d-loading{text-align:center;padding:40px 16px}
+.d-loader{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);border-top-color:var(--forest);animation:spin 1s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-title{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--dark);margin-bottom:5px;font-weight:400}
+.load-sub{font-size:11px;color:var(--mid);margin-bottom:20px}
+.load-step{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:11px;opacity:0;transition:opacity .4s,color .4s}
+.load-step.show{opacity:1;color:var(--dark)}
+.ls-dot{width:4px;height:4px;border-radius:50%;background:var(--border);flex-shrink:0;transition:background .4s}
+.load-step.show .ls-dot{background:var(--forest)}
+
+/* Guide résultat */
+.guide-hero{background:var(--forest);border-radius:8px;padding:16px;margin:14px 0 10px}
+.g-eyebrow{font-size:9px;letter-spacing:3px;color:rgba(255,255,255,0.5);text-transform:uppercase;margin-bottom:4px}
+.g-title{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--white);margin-bottom:2px;font-weight:400}
+.g-meta{font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:8px}
+.g-chips{display:flex;flex-wrap:wrap;gap:4px}
+.g-chip{font-size:9px;padding:2px 8px;border-radius:99px;background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);letter-spacing:.03em}
+
+.day-label-g{font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--dark);margin:14px 0 6px;display:flex;align-items:center;gap:8px;font-weight:400}
+.day-label-g::after{content:'';flex:1;height:1px;background:var(--border)}
+.place-card{background:var(--white);border-radius:8px;padding:12px;margin-bottom:6px;display:flex;gap:10px;border:1px solid var(--border)}
+.place-num{width:22px;height:22px;border-radius:50%;background:var(--forest);color:var(--white);font-size:9px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Cormorant Garamond',serif}
+.place-body{flex:1;min-width:0}
+.place-time{font-size:9px;color:var(--sage);font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
+.place-name{font-size:12px;font-weight:500;color:var(--dark);margin-bottom:2px}
+.place-cat{font-size:9px;padding:1px 6px;border-radius:99px;background:var(--off);color:var(--mid);display:inline-block;margin-bottom:4px;border:1px solid var(--border)}
+.place-desc{font-size:11px;color:var(--mid);line-height:1.5;margin-bottom:4px}
+.place-review{font-size:10px;color:var(--bark);font-style:italic;margin-bottom:6px;line-height:1.4}
+.place-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px}
+.rating{font-size:10px;color:var(--bark);font-weight:500}
+.travel-tag{font-size:9px;padding:2px 6px;border-radius:99px;background:var(--off);color:var(--mid);border:1px solid var(--border)}
+.place-link{font-size:10px;color:var(--forest);font-weight:500;padding:2px 8px;border:1px solid rgba(67,89,59,0.3);border-radius:99px;white-space:nowrap}
+
+.tips-card{background:var(--off);border-radius:8px;padding:12px;margin-bottom:8px;border:1px solid var(--border)}
+.tips-label{font-size:9px;color:var(--sage);letter-spacing:2px;text-transform:uppercase;font-weight:500;margin-bottom:8px}
+.tip-item{display:flex;gap:6px;align-items:flex-start;margin-bottom:5px}
+.tip-item:last-child{margin-bottom:0}
+.tip-dot{width:3px;height:3px;border-radius:50%;background:var(--sage);margin-top:5px;flex-shrink:0}
+.tip-text{font-size:11px;color:var(--mid);line-height:1.5}
+
+.hotel-foot{background:var(--white);border-radius:8px;padding:12px;display:flex;align-items:center;gap:10px;border:1px solid var(--border);margin-top:12px}
+.foot-icon{width:28px;height:28px;border-radius:6px;background:var(--forest);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.foot-name{font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--dark);margin-bottom:1px;font-weight:400}
+.foot-detail{font-size:10px;color:var(--mid);line-height:1.5}
+
+.verified{background:var(--off);border-radius:6px;padding:8px 12px;display:flex;gap:6px;margin-top:8px;border:1px solid var(--border)}
+.ver-text{font-size:10px;color:var(--mid);line-height:1.5}
+.pdf-btn{width:100%;padding:11px;background:var(--dark);border:none;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--white);cursor:pointer;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s}
+.pdf-btn:hover{background:var(--forest)}
+.divider-d{height:1px;background:var(--border);margin:12px 0}
+.section-subtitle-d{font-size:9px;color:var(--mid);font-weight:500;margin-bottom:8px;letter-spacing:.08em;text-transform:uppercase}
+
+/* FAQ */
+.faq-list{margin-top:2.5rem}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-item:first-child{border-top:1px solid var(--border)}
+.faq-q{width:100%;background:none;border:none;padding:1.5rem 0;display:flex;align-items:center;justify-content:space-between;gap:1rem;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;color:var(--dark);cursor:pointer;text-align:left;transition:color .2s}
+.faq-q:hover{color:var(--forest)}
+.faq-icon{flex-shrink:0;transition:transform .3s ease;color:var(--mid)}
+.faq-item.open .faq-icon{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.faq-item.open .faq-a{max-height:200px}
+.faq-a p{font-size:14px;color:var(--mid);line-height:1.8;padding-bottom:1.5rem;font-weight:300}
+
+/* CONTACT */
+.cta-wrap{background:var(--off);border:1px solid var(--border);border-radius:var(--r);padding:4.5rem;text-align:center;max-width:680px;margin:0 auto}
+.cta-wrap p{color:var(--mid);max-width:400px;margin:0 auto 2rem;font-size:14px;font-weight:300;line-height:1.8}
+.form-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.form-row input{font-family:'DM Sans',sans-serif;font-size:13px;padding:11px 18px;background:var(--white);border:1px solid var(--border);color:var(--dark);flex:1;min-width:220px;max-width:280px;outline:none;border-radius:4px;transition:border-color .2s}
+.form-row input:focus{border-color:var(--forest)}
+
+/* FOOTER */
+footer{padding:2rem 4rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--mid);flex-wrap:wrap;gap:1rem}
+footer a:hover{color:var(--dark)}
+
+/* QUOTE SECTION */
+.quote-section{background:var(--forest);padding:5rem 4rem;text-align:center}
+.quote-section blockquote{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--white);max-width:700px;margin:0 auto 1.5rem;line-height:1.5;font-style:italic}
+.quote-author{font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:.1em;text-transform:uppercase}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-top:3rem;text-align:center}
+.stat{padding:2.5rem;border-right:1px solid var(--border)}
+.stat:last-child{border-right:none}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--forest);line-height:1;margin-bottom:.5rem}
+.stat-label{font-size:12px;color:var(--mid);font-weight:400;line-height:1.5}
+
+@media(max-width:768px){
+  nav{padding:1rem 1.5rem}
+  .nav-links,.btn-nav{display:none}
+  .hamburger{display:flex}
+  .hero{padding:5rem 1.5rem 4rem}
+  h1{font-size:38px}
+  section{padding:4rem 1.5rem}
+  .steps-wrap{grid-template-columns:1fr}
+  .step{border-right:none;border-bottom:1px solid var(--border)}
+  .step:last-child{border-bottom:none}
+  .ben-grid{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:1fr}
+  .stat{border-right:none;border-bottom:1px solid var(--border)}
+  .stat:last-child{border-bottom:none}
+  .feat-header,.feat-row-main{grid-template-columns:1fr}
+  .feat-header-cell:first-child,.feat-cell:first-child{border-right:none;border-bottom:1px solid var(--border)}
+  .feat-header-cell:last-child,.feat-cell:last-child{display:none}
+  .cta-wrap{padding:2.5rem 1.5rem}
+  footer{padding:1.5rem;flex-direction:column;gap:.75rem;text-align:center}
+  .trust-bar{padding:2rem 1.5rem}
+  .trust-logos{gap:1.5rem}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Esca<span>py</span></div>
+  <div class="nav-links">
+    <a onclick="document.getElementById('concept').scrollIntoView({behavior:'smooth'})">Le concept</a>
+    <a onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">Fonctionnalités</a>
+    <a onclick="document.getElementById('benefits').scrollIntoView({behavior:'smooth'})">Pour les hôtels</a>
+    <a onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">Démo</a>
+    <a onclick="document.getElementById('faq').scrollIntoView({behavior:'smooth'})">FAQ</a>
+    <a onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Contact</a>
+  </div>
+  <button class="btn-nav" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Demander une démo</button>
+  <div class="hamburger" onclick="document.getElementById('mobileMenu').classList.add('open')">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <span class="close-btn" onclick="document.getElementById('mobileMenu').classList.remove('open')">✕</span>
+  <a onclick="document.getElementById('concept').scrollIntoView({behavior:'smooth'});document.getElementById('mobileMenu').classList.remove('open')">Le concept</a>
+  <a onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'});document.getElementById('mobileMenu').classList.remove('open')">Fonctionnalités</a>
+  <a onclick="document.getElementById('benefits').scrollIntoView({behavior:'smooth'});document.getElementById('mobileMenu').classList.remove('open')">Pour les hôtels</a>
+  <a onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'});document.getElementById('mobileMenu').classList.remove('open')">Démo</a>
+  <a onclick="document.getElementById('faq').scrollIntoView({behavior:'smooth'});document.getElementById('mobileMenu').classList.remove('open')">FAQ</a>
+  <a onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'});document.getElementById('mobileMenu').classList.remove('open')">Contact</a>
+  <button class="btn-nav-m" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'});document.getElementById('mobileMenu').classList.remove('open')">Demander une démo</button>
+</div>
+
+<div class="hero">
+  <div class="hero-badge"><span class="badge-dot"></span>Solution B2B · Hôtellerie & Tourisme</div>
+  <h1>L'expérience voyage <em>sur-mesure</em><br>pour vos clients</h1>
+  <p class="hero-sub">Un QR code dans votre hôtel. Un guide touristique personnalisé en quelques secondes. Zéro friction pour le client, valeur immédiate pour votre établissement.</p>
+  <div class="ctas">
+    <button class="btn-primary" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">Voir la démo</button>
+    <button class="btn-ghost" onclick="document.getElementById('concept').scrollIntoView({behavior:'smooth'})">Découvrir le concept</button>
+  </div>
+</div>
+
+<div class="trust-bar">
+  <div class="trust-label">Conçu pour l'hôtellerie indépendante et les groupes</div>
+  <div class="trust-logos">
+    <span class="trust-logo">Hôtels Boutique</span>
+    <span class="trust-logo">·</span>
+    <span class="trust-logo">Resorts & Spas</span>
+    <span class="trust-logo">·</span>
+    <span class="trust-logo">Châteaux & Domaines</span>
+    <span class="trust-logo">·</span>
+    <span class="trust-logo">Groupes Hôteliers</span>
+  </div>
+</div>
+
+<section id="concept" style="background:var(--white)">
+  <div class="inner">
+    <div class="section-label">Comment ça fonctionne</div>
+    <h2>Simple pour l'hôtel.<br><em>Mémorable</em> pour le client.</h2>
+    <div class="steps-wrap">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Le client scanne</h3>
+        <p>Un QR code discret à la réception, en chambre ou au restaurant. Aucune application à télécharger, aucun compte à créer.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>L'hôtel est reconnu</h3>
+        <p>Chaque QR code est encodé exclusivement pour votre établissement. Escapy sait instantanément d'où part le client — sans aucune saisie.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Un guide unique est généré</h3>
+        <p>En quelques secondes, un parcours adapté à la durée du séjour, aux préférences du client et à l'offre de votre établissement.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features" style="background:var(--off)">
+  <div class="inner">
+    <div class="section-label">Fonctionnalités</div>
+    <h2>Ce que comprend<br><em>la solution</em></h2>
+    <div class="two-acc-grid">
+
+      <!-- HÔTEL -->
+      <div class="acc-block">
+        <div class="acc-block-header" style="background:var(--forest);color:var(--white)">
+          <span>Pour l'hôtel</span>
+        </div>
+        <div class="acc-list">
+
+          <div class="acc-item">
+            <button class="acc-q acc-q-hotel" onclick="toggleAcc(this)">
+              <span class="acc-num acc-num-hotel">01</span>
+              QR code dédié
+              <svg class="acc-arrow" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="acc-detail">Un QR code unique encodé pour votre hôtel, à poser à la réception, en chambre ou au restaurant. Aucune installation technique requise.</div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-q acc-q-hotel" onclick="toggleAcc(this)">
+              <span class="acc-num acc-num-hotel">02</span>
+              Déploiement sur mesure
+              <svg class="acc-arrow" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="acc-detail">Destinations, langues, services, identité visuelle — tout est configuré selon votre établissement lors de la mise en place. Aucune intervention de votre équipe ensuite.</div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-q acc-q-hotel" onclick="toggleAcc(this)">
+              <span class="acc-num acc-num-hotel">03</span>
+              Vos services mis en avant
+              <svg class="acc-arrow" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="acc-detail">Spa, restaurant, activités — configurés une fois, suggérés naturellement à chaque client selon ses préférences, sans aucune action de votre part.</div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-q acc-q-hotel" onclick="toggleAcc(this)">
+              <span class="acc-num acc-num-hotel">04</span>
+              Tableau de bord
+              <svg class="acc-arrow" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="acc-detail">Consultez le nombre de scans, les destinations les plus demandées et les profils de vos visiteurs pour mieux connaître votre clientèle.</div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-q acc-q-hotel" onclick="toggleAcc(this)">
+              <span class="acc-num acc-num-hotel">05</span>
+              Aucune donnée collectée
+              <svg class="acc-arrow" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="acc-detail">Escapy ne collecte aucune donnée personnelle. Votre hôtel n'a aucune obligation déclarative supplémentaire liée à notre solution. Conforme RGPD.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- CLIENT -->
+      <div class="acc-block">
+        <div class="acc-block-header" style="background:var(--bark);color:var(--white)">
+          <span>Pour le client</span>
+        </div>
+        <div class="acc-list">
+
+          <div class="acc-item">
+            <button class="acc-q acc-q-client" onclick="toggleAcc(this)">
+              <span class="acc-num acc-num-client">01</span>
+              Aucune application
+              <svg class="acc-arrow" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="acc-detail">Un simple scan suffit. Pas de téléchargement, pas de compte à créer. Le guide s'ouvre directement dans le navigateur du téléphone.</div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-q acc-q-client" onclick="toggleAcc(this)">
+              <span class="acc-num acc-num-client">02</span>
+              Guide 100% personnalisé
+              <svg class="acc-arrow" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="acc-detail">Profil, durée de séjour, centres d'intérêt, budget — chaque guide est unique. Deux clients du même hôtel obtiennent deux parcours différents.</div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-q acc-q-client" onclick="toggleAcc(this)">
+              <span class="acc-num acc-num-client">03</span>
+              Dans sa langue
+              <svg class="acc-arrow" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="acc-detail">Le client choisit sa langue dès le premier écran. L'intégralité du guide est générée dans cette langue — recommandations, conseils pratiques, horaires.</div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-q acc-q-client" onclick="toggleAcc(this)">
+              <span class="acc-num acc-num-client">04</span>
+              Guide PDF à emporter
+              <svg class="acc-arrow" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="acc-detail">Un PDF complet est généré avec l'itinéraire jour par jour, les horaires, les adresses et les liens de réservation directe — à consulter même hors connexion.</div>
+          </div>
+
+          <div class="acc-item">
+            <button class="acc-q acc-q-client" onclick="toggleAcc(this)">
+              <span class="acc-num acc-num-client">05</span>
+              Confidentialité garantie
+              <svg class="acc-arrow" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="acc-detail">Aucune donnée personnelle n'est conservée. Chaque session est indépendante et anonyme. Le client peut utiliser le service en toute confiance.</div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="benefits" style="background:var(--white)">
+  <div class="inner">
+    <div class="section-label">Pourquoi Escapy</div>
+    <h2>Des bénéfices <em>concrets</em><br>pour votre établissement</h2>
+    <div class="ben-grid">
+      <div class="ben">
+        <div class="ben-line" style="background:var(--sky)"></div>
+        <h4>Différenciation concurrentielle</h4>
+        <p>Un service exclusif qui valorise votre établissement et justifie un positionnement premium auprès de vos clients.</p>
+      </div>
+      <div class="ben">
+        <div class="ben-line" style="background:var(--sage)"></div>
+        <h4>Fidélisation & satisfaction client</h4>
+        <p>Un client qui vit une expérience mémorable grâce à vous est un client qui revient — et qui en parle autour de lui.</p>
+      </div>
+      <div class="ben">
+        <div class="ben-line" style="background:var(--sand)"></div>
+        <h4>Zéro effort pour votre équipe</h4>
+        <p>Le guide se génère automatiquement à chaque scan. Aucune intervention de la réception, disponible 24h/24.</p>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-num">Sur mesure</div>
+        <div class="stat-label">Destinations, langues, services — tout est configuré selon votre établissement</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">Sans app</div>
+        <div class="stat-label">Aucune application à télécharger</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">0 donnée</div>
+        <div class="stat-label">Aucune donnée personnelle conservée</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="demo" style="background:var(--off)">
+  <div class="demo-intro">
+    <div class="section-label">Démo interactive</div>
+    <h2>L'expérience client,<br><em>en direct</em></h2>
+    <p style="font-size:14px;color:var(--mid);line-height:1.8;font-weight:300">Répondez aux questions et découvrez le guide personnalisé généré par Escapy — exactement comme le verrait un client de votre hôtel.</p>
+  </div>
+  <div class="demo-wrap">
+    <div class="phone-frame">
+      <div class="hotel-header">
+        <div class="h-eyebrow">Escapy · Guide personnalisé</div>
+        <div class="h-name">Hôtel La Belle Époque</div>
+        <div class="gold-rule"></div>
+        <div class="h-sub">Nice · Côte d'Azur</div>
+      </div>
+      <div class="demo-body-wrap">
+        <div class="weather">
+          <div class="w-left"><div class="w-temp" id="w-temp">24°C</div><div class="w-desc" id="w-desc">Ensoleillé · Nice</div></div>
+          <div class="w-right" id="w-advice">Guide adapté<br>à la météo</div>
+        </div>
+        <div class="d-container">
+
+          <div class="d-screen active" id="ds1">
+            <div class="d-hero"><div class="d-hero-title">Bienvenue à Nice</div><div class="d-hero-sub">En quelques secondes, votre guide touristique personnalisé est prêt.</div></div>
+            <div class="d-card">
+              <div class="q-step">Étape 1 / 7</div>
+              <div class="q-text">Dans quelle langue ?</div>
+              <div class="q-hint">Votre guide sera entièrement rédigé dans cette langue.</div>
+              <div class="lang-grid">
+                <div class="lang-btn sel" id="lb-fr" onclick="dSelLang('fr')"><span class="lang-flag">🇫🇷</span><span class="lang-label">Français</span></div>
+                <div class="lang-btn" id="lb-en" onclick="dSelLang('en')"><span class="lang-flag">🇬🇧</span><span class="lang-label">English</span></div>
+                <div class="lang-btn" id="lb-es" onclick="dSelLang('es')"><span class="lang-flag">🇪🇸</span><span class="lang-label">Español</span></div>
+              </div>
+              <button class="d-btn-primary" onclick="dGo(2)">Commencer →</button>
+            </div>
+            <div class="rgpd">🔒&nbsp;<div class="rgpd-text"><strong>Confidentialité :</strong> Aucune donnée personnelle conservée. Conforme RGPD.</div></div>
+          </div>
+
+          <div class="d-screen" id="ds2"><div class="progress-wrap"><div class="progress-label"><span id="dpl2"></span></div><div class="progress-bar"><div class="progress-fill" style="width:14%"></div></div></div><div class="d-card"><div class="q-step" id="dqs2"></div><div class="q-text" id="dqt2"></div><div class="q-hint" id="dqh2"></div><div class="opts-2" id="dqo2"></div></div><button class="d-btn-primary" id="dbtn2" onclick="dGo(3)" disabled></button></div>
+          <div class="d-screen" id="ds3"><div class="progress-wrap"><div class="progress-label"><span id="dpl3"></span></div><div class="progress-bar"><div class="progress-fill" style="width:28%"></div></div></div><div class="d-card"><div class="q-step" id="dqs3"></div><div class="q-text" id="dqt3"></div><div class="q-hint" id="dqh3"></div><div class="dur-grid" id="ddur-grid"></div></div><button class="d-btn-primary" id="dbtn3" onclick="dGo(4)" disabled></button></div>
+          <div class="d-screen" id="ds4"><div class="progress-wrap"><div class="progress-label"><span id="dpl4"></span></div><div class="progress-bar"><div class="progress-fill" style="width:42%"></div></div></div><div class="d-card"><div class="q-step" id="dqs4"></div><div class="q-text" id="dqt4"></div><div class="q-hint" id="dqh4"></div><div class="date-grid"><div class="date-field"><label id="ddl-arrive">Arrivée</label><input type="date" id="ddate-in" onchange="dCheckDates()"></div><div class="date-field"><label id="ddl-depart">Départ</label><input type="date" id="ddate-out" onchange="dCheckDates()"></div></div></div><button class="d-btn-primary" id="dbtn4" onclick="dGo(5)" disabled></button></div>
+          <div class="d-screen" id="ds5"><div class="progress-wrap"><div class="progress-label"><span id="dpl5"></span></div><div class="progress-bar"><div class="progress-fill" style="width:56%"></div></div></div><div class="d-card"><div class="q-step" id="dqs5"></div><div class="q-text" id="dqt5"></div><div class="q-hint" id="dqh5"></div><div class="moment-grid" id="dmoment-grid"></div><div class="divider-d"></div><div class="section-subtitle-d" id="dqh5b"></div><div class="unavail-wrap" id="dunavail-grid"></div></div><button class="d-btn-primary" id="dbtn5" onclick="dGo(6)" disabled></button></div>
+          <div class="d-screen" id="ds6"><div class="progress-wrap"><div class="progress-label"><span id="dpl6"></span></div><div class="progress-bar"><div class="progress-fill" style="width:70%"></div></div></div><div class="d-card"><div class="q-step" id="dqs6"></div><div class="q-text" id="dqt6"></div><div class="q-hint" id="dqh6"></div><div class="interests-grid" id="dint-grid"></div><div class="sel-count" id="dsel-count"></div></div><button class="d-btn-primary" id="dbtn6" onclick="dGo(7)" disabled></button></div>
+          <div class="d-screen" id="ds7"><div class="progress-wrap"><div class="progress-label"><span id="dpl7"></span></div><div class="progress-bar"><div class="progress-fill" style="width:84%"></div></div></div><div class="d-card"><div class="q-step" id="dqs7"></div><div class="q-text" id="dqt7"></div><div class="q-hint" id="dqh7"></div><div class="opts-3" id="dqo7"></div></div><button class="d-btn-primary" id="dbtn7" onclick="dGo('load')" disabled></button></div>
+
+          <div class="d-screen" id="ds-load"><div class="d-loading"><div class="d-loader"></div><div class="load-title" id="dlt"></div><div class="load-sub" id="dls-sub"></div><div><div class="load-step" id="dls1"><div class="ls-dot"></div><span id="dlss1"></span></div><div class="load-step" id="dls2"><div class="ls-dot"></div><span id="dlss2"></span></div><div class="load-step" id="dls3"><div class="ls-dot"></div><span id="dlss3"></span></div><div class="load-step" id="dls4"><div class="ls-dot"></div><span id="dlss4"></span></div><div class="load-step" id="dls5"><div class="ls-dot"></div><span id="dlss5"></span></div></div></div></div>
+
+          <div class="d-screen" id="ds-guide">
+            <div class="guide-hero"><div class="g-eyebrow">Votre guide Escapy</div><div class="g-title" id="dg-title"></div><div class="g-meta" id="dg-meta"></div><div class="g-chips" id="dg-chips"></div></div>
+            <div id="dguide-body"></div>
+            <div class="hotel-foot"><div class="foot-icon"><svg width="14" height="14" fill="none" stroke="white" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div><div class="foot-name">Hôtel La Belle Époque</div><div class="foot-detail">+33 4 93 XX XX XX · 12 Promenade des Anglais<br>WiFi : BelleEpoque · Code : Nice2026</div></div></div>
+            <div class="verified"><div class="ver-text"><strong>Vérifié par l'équipe de l'hôtel.</strong> Les horaires peuvent varier. Aucune donnée conservée.</div></div>
+            <button class="pdf-btn" onclick="dDlPDF()">Télécharger mon guide en PDF</button>
+            <button class="d-btn-secondary" onclick="dRestart()">↩ Recommencer</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq" style="background:var(--off)">
+  <div style="max-width:680px;margin:0 auto">
+    <div class="section-label">Questions fréquentes</div>
+    <h2>Vous avez des <em>questions</em></h2>
+
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Comment fonctionne le QR code concrètement ?
+          <svg class="faq-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Chaque hôtel reçoit un QR code unique généré par Escapy. Il suffit de l'imprimer et de le poser à l'endroit de votre choix — réception, chambre, restaurant. Le client le scanne avec son téléphone et accède immédiatement à son guide, sans télécharger d'application.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Est-ce que c'est difficile à mettre en place ?
+          <svg class="faq-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Non. La mise en place ne demande aucune compétence technique. Nous configurons la solution pour vous, vous recevez votre QR code prêt à l'emploi. Aucun logiciel à installer, aucune formation requise pour votre équipe.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Combien de temps pour déployer la solution ?
+          <svg class="faq-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>En général, entre 48h et une semaine selon le niveau de personnalisation souhaité. Un déploiement standard — QR code, configuration des destinations et des services de l'hôtel — se fait en deux à trois jours ouvrés.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Le guide est-il vraiment personnalisé pour chaque client ?
+          <svg class="faq-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Oui. Chaque guide est généré à partir des réponses du client — profil, durée de séjour, centres d'intérêt, budget, moment de la journée. Deux clients du même hôtel qui répondent différemment obtiendront deux guides distincts.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="contact" style="background:var(--white)">
+  <div class="cta-wrap">
+    <div class="section-label" style="margin-bottom:.75rem">Intégrez Escapy</div>
+    <h2>Prêt à offrir une expérience<br><em>inoubliable</em> à vos clients ?</h2>
+    <p>Une démo personnalisée sous 48h. Sans engagement.</p>
+    <div id="form-wrap">
+      <div class="form-row">
+        <input type="email" id="contact-email" placeholder="contact@votrehotel.com" required>
+        <button class="btn-primary" onclick="sendForm()">Demander une démo</button>
+      </div>
+      <div id="form-msg" style="margin-top:1rem;font-size:13px;display:none"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="logo" style="font-size:17px">Esca<span style="color:var(--forest)">py</span></div>
+  <div style="display:flex;gap:2rem">
+    <a href="/mentions-legales">Mentions légales</a>
+    <a href="/confidentialite">Confidentialité</a>
+    <a href="mailto:contact@escapy.fr">contact@escapy.fr</a>
+  </div>
+</footer>
+
+<script>
+function toggleFaq(btn){const item=btn.parentElement;const wasOpen=item.classList.contains('open');document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));if(!wasOpen)item.classList.add('open');}
+function toggleAcc(btn){const item=btn.parentElement;const wasOpen=item.classList.contains('open');item.closest('.acc-list').querySelectorAll('.acc-item').forEach(i=>i.classList.remove('open'));if(!wasOpen)item.classList.add('open');}
+function toggleFeat(row){const wasOpen=row.classList.contains('open');document.querySelectorAll('.feat-row').forEach(r=>r.classList.remove('open'));if(!wasOpen)row.classList.add('open');}
+const ICONS={
+  couple:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  famille:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+  solo:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+  amis:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  matin:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/></svg>`,
+  soir:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
+  full:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>`,
+  we:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+  culture:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><line x1="2" y1="22" x2="22" y2="22"/><rect x="3" y="14" width="4" height="8"/><rect x="10" y="11" width="4" height="11"/><rect x="17" y="7" width="4" height="15"/><path d="M2 3l10-2 10 4"/></svg>`,
+  gastro:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>`,
+  nature:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 22"/><path d="M9.5 7.7C6.6 9.4 5 12.5 5 16"/><path d="M22 3c-3.8 1-6.5 4-7 8"/><path d="M22 3s-10 0-10 11c0 3 1 5 1 5"/></svg>`,
+  plage:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>`,
+  shopping:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`,
+  nightlife:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+  sport:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8l-4 8"/><path d="M12 8l4 8"/><path d="M8.5 14h7"/></svg>`,
+  bienetr:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
+  eco:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
+  moyen:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`,
+  premium:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
+};
+
+const DA={lang:'fr',profile:null,duration:null,dateIn:null,dateOut:null,moment:null,unavail:[],interests:[],budget:null};
+const DT={
+fr:{
+  continue:'Continuer →',generate:'Générer mon guide →',
+  q2:{step:'Étape 2 / 7',text:'Vous voyagez…',hint:'Cela nous aide à adapter les recommandations.',opts:[{v:'couple',i:'couple',l:'En couple'},{v:'famille',i:'famille',l:'En famille'},{v:'solo',i:'solo',l:'Solo'},{v:'amis',i:'amis',l:'Entre amis'}]},
+  q3:{step:'Étape 3 / 7',text:'Durée de votre séjour ?',hint:'Nombre de nuits à Nice.',dur:[{v:0,l:'Journée'},{v:1,l:'1 nuit'},{v:2,l:'2 nuits'},{v:3,l:'3 nuits'},{v:5,l:'5 nuits'},{v:7,l:'7 nuits+'}]},
+  q4:{step:'Étape 4 / 7',text:'Vos dates de séjour ?',hint:'Pour adapter les recommandations à la saison.',arrive:'Arrivée',depart:'Départ'},
+  q5:{step:'Étape 5 / 7',text:'Quand souhaitez-vous sortir ?',hint:'Préférence pour vos sorties.',hint2:'Jours indisponibles (optionnel)',moments:[{v:'matin',i:'matin',l:'Matin',s:'Avant 14h'},{v:'soir',i:'soir',l:'Soir',s:'Après 14h'},{v:'full',i:'full',l:'Journée',s:'Toute la journée'},{v:'we',i:'we',l:'Week-end',s:'Sam & Dim'}],jours:[{v:'0',l:'Aucun'},{v:'1',l:'Lun'},{v:'2',l:'Mar'},{v:'3',l:'Mer'},{v:'4',l:'Jeu'},{v:'5',l:'Ven'},{v:'6',l:'Sam'},{v:'7',l:'Dim'}]},
+  q6:{step:'Étape 6 / 7',text:'Vos centres d\'intérêt ?',hint:'Sélectionnez tout ce qui vous inspire.',interests:[{v:'culture',i:'culture',l:'Culture',s:'Musées, monuments'},{v:'gastro',i:'gastro',l:'Gastronomie',s:'Restaurants, marchés'},{v:'nature',i:'nature',l:'Nature',s:'Parcs, balades'},{v:'plage',i:'plage',l:'Plage',s:'Mer & farniente'},{v:'shopping',i:'shopping',l:'Shopping',s:'Boutiques, créateurs'},{v:'nightlife',i:'nightlife',l:'Soirées',s:'Bars, concerts'},{v:'sport',i:'sport',l:'Sport',s:'Vélo, randonnée'},{v:'bienetr',i:'bienetr',l:'Bien-être',s:'Spa, détente'}],counts:['Sélectionnez au moins un centre d\'intérêt','1 sélectionné','2 sélectionnés','3 sélectionnés','4 sélectionnés','5 ou plus sélectionnés'],catLabels:{culture:'Culture',gastro:'Gastronomie',nature:'Nature',plage:'Plage',shopping:'Shopping',nightlife:'Soirées',sport:'Sport',bienetr:'Bien-être'}},
+  q7:{step:'Étape 7 / 7',text:'Votre budget ?',hint:'Pour adapter les recommandations à vos attentes.',opts:[{v:'eco',i:'eco',l:'Économique',s:'Bon rapport qualité/prix'},{v:'moyen',i:'moyen',l:'Modéré',s:'Équilibré'},{v:'premium',i:'premium',l:'Premium',s:'Haut de gamme'}]},
+  loading:{title:'Préparation de votre guide…',sub:'Analyse de vos préférences',steps:['Analyse de vos préférences','Sélection des meilleures adresses','Optimisation des horaires','Organisation de l\'itinéraire','Finalisation du guide']},
+  dayOnly:'Programme de la journée',dayLabel:'Jour',
+  tipsTitle:'Conseils pratiques',
+  tips:['Le tramway T1 et T2 couvre l\'essentiel des sites touristiques.','La carte Nice City Pass inclut musées et transports.','Le marché du Cours Saleya se tient chaque matin sauf le lundi.','Réservez les restaurants dès votre arrivée en haute saison.']
+},
+en:{
+  continue:'Continue →',generate:'Generate my guide →',
+  q2:{step:'Step 2 / 7',text:'You are travelling…',hint:'This helps us tailor recommendations.',opts:[{v:'couple',i:'couple',l:'As a couple'},{v:'famille',i:'famille',l:'With family'},{v:'solo',i:'solo',l:'Solo'},{v:'amis',i:'amis',l:'With friends'}]},
+  q3:{step:'Step 3 / 7',text:'Length of your stay?',hint:'Number of nights in Nice.',dur:[{v:0,l:'Day trip'},{v:1,l:'1 night'},{v:2,l:'2 nights'},{v:3,l:'3 nights'},{v:5,l:'5 nights'},{v:7,l:'7 nights+'}]},
+  q4:{step:'Step 4 / 7',text:'Your travel dates?',hint:'To tailor recommendations to the season.',arrive:'Check-in',depart:'Check-out'},
+  q5:{step:'Step 5 / 7',text:'When do you prefer to go out?',hint:'Your preferred time for activities.',hint2:'Unavailable days (optional)',moments:[{v:'matin',i:'matin',l:'Morning',s:'Before 2pm'},{v:'soir',i:'soir',l:'Evening',s:'After 2pm'},{v:'full',i:'full',l:'Full day',s:'All day'},{v:'we',i:'we',l:'Weekend',s:'Sat & Sun'}],jours:[{v:'0',l:'None'},{v:'1',l:'Mon'},{v:'2',l:'Tue'},{v:'3',l:'Wed'},{v:'4',l:'Thu'},{v:'5',l:'Fri'},{v:'6',l:'Sat'},{v:'7',l:'Sun'}]},
+  q6:{step:'Step 6 / 7',text:'Your interests?',hint:'Select everything that inspires you.',interests:[{v:'culture',i:'culture',l:'Culture',s:'Museums, monuments'},{v:'gastro',i:'gastro',l:'Gastronomy',s:'Restaurants, markets'},{v:'nature',i:'nature',l:'Nature',s:'Parks, walks'},{v:'plage',i:'plage',l:'Beach',s:'Sea & relaxation'},{v:'shopping',i:'shopping',l:'Shopping',s:'Boutiques, designers'},{v:'nightlife',i:'nightlife',l:'Nightlife',s:'Bars, concerts'},{v:'sport',i:'sport',l:'Sport',s:'Cycling, hiking'},{v:'bienetr',i:'bienetr',l:'Wellness',s:'Spa, relaxation'}],counts:['Select at least one interest','1 selected','2 selected','3 selected','4 selected','5+ selected'],catLabels:{culture:'Culture',gastro:'Gastronomy',nature:'Nature',plage:'Beach',shopping:'Shopping',nightlife:'Nightlife',sport:'Sport',bienetr:'Wellness'}},
+  q7:{step:'Step 7 / 7',text:'Your budget?',hint:'To match recommendations to your expectations.',opts:[{v:'eco',i:'eco',l:'Budget',s:'Best value'},{v:'moyen',i:'moyen',l:'Moderate',s:'Balanced'},{v:'premium',i:'premium',l:'Premium',s:'High-end'}]},
+  loading:{title:'Preparing your guide…',sub:'Analysing your preferences',steps:['Analysing your preferences','Selecting the best spots','Optimising schedules','Organising the itinerary','Finalising your guide']},
+  dayOnly:'Day programme',dayLabel:'Day',
+  tipsTitle:'Practical tips',
+  tips:['Tram lines T1 and T2 cover most tourist sites.','The Nice City Pass includes museums and transport.','The Cours Saleya market is open every morning except Monday.','Book restaurants upon arrival during peak season.']
+},
+es:{
+  continue:'Continuar →',generate:'Generar mi guía →',
+  q2:{step:'Paso 2 / 7',text:'Viaja…',hint:'Esto nos ayuda a personalizar las recomendaciones.',opts:[{v:'couple',i:'couple',l:'En pareja'},{v:'famille',i:'famille',l:'Con familia'},{v:'solo',i:'solo',l:'Solo'},{v:'amis',i:'amis',l:'Con amigos'}]},
+  q3:{step:'Paso 3 / 7',text:'¿Duración de su estancia?',hint:'Número de noches en Niza.',dur:[{v:0,l:'Un día'},{v:1,l:'1 noche'},{v:2,l:'2 noches'},{v:3,l:'3 noches'},{v:5,l:'5 noches'},{v:7,l:'7 noches+'}]},
+  q4:{step:'Paso 4 / 7',text:'¿Sus fechas de estancia?',hint:'Para adaptar las recomendaciones a la temporada.',arrive:'Llegada',depart:'Salida'},
+  q5:{step:'Paso 5 / 7',text:'¿Cuándo prefiere salir?',hint:'Preferencia para sus actividades.',hint2:'Días no disponibles (opcional)',moments:[{v:'matin',i:'matin',l:'Mañana',s:'Antes de las 14h'},{v:'soir',i:'soir',l:'Tarde',s:'Después de las 14h'},{v:'full',i:'full',l:'Día completo',s:'Todo el día'},{v:'we',i:'we',l:'Fin de semana',s:'Sáb & Dom'}],jours:[{v:'0',l:'Ninguno'},{v:'1',l:'Lun'},{v:'2',l:'Mar'},{v:'3',l:'Mié'},{v:'4',l:'Jue'},{v:'5',l:'Vie'},{v:'6',l:'Sáb'},{v:'7',l:'Dom'}]},
+  q6:{step:'Paso 6 / 7',text:'¿Sus intereses?',hint:'Seleccione todo lo que le inspire.',interests:[{v:'culture',i:'culture',l:'Cultura',s:'Museos, monumentos'},{v:'gastro',i:'gastro',l:'Gastronomía',s:'Restaurantes, mercados'},{v:'nature',i:'nature',l:'Naturaleza',s:'Parques, paseos'},{v:'plage',i:'plage',l:'Playa',s:'Mar y descanso'},{v:'shopping',i:'shopping',l:'Compras',s:'Tiendas, diseñadores'},{v:'nightlife',i:'nightlife',l:'Vida nocturna',s:'Bares, conciertos'},{v:'sport',i:'sport',l:'Deporte',s:'Ciclismo, senderismo'},{v:'bienetr',i:'bienetr',l:'Bienestar',s:'Spa, relajación'}],counts:['Seleccione al menos un interés','1 seleccionado','2 seleccionados','3 seleccionados','4 seleccionados','5+ seleccionados'],catLabels:{culture:'Cultura',gastro:'Gastronomía',nature:'Naturaleza',plage:'Playa',shopping:'Compras',nightlife:'Vida nocturna',sport:'Deporte',bienetr:'Bienestar'}},
+  q7:{step:'Paso 7 / 7',text:'¿Su presupuesto?',hint:'Para adaptar las recomendaciones a sus expectativas.',opts:[{v:'eco',i:'eco',l:'Económico',s:'Mejor relación calidad/precio'},{v:'moyen',i:'moyen',l:'Moderado',s:'Equilibrado'},{v:'premium',i:'premium',l:'Premium',s:'Alto nivel'}]},
+  loading:{title:'Preparando su guía…',sub:'Analizando sus preferencias',steps:['Analizando sus preferencias','Seleccionando los mejores lugares','Optimizando los horarios','Organizando el itinerario','Finalizando su guía']},
+  dayOnly:'Programa del día',dayLabel:'Día',
+  tipsTitle:'Consejos prácticos',
+  tips:['Los tranvías T1 y T2 cubren la mayoría de los sitios turísticos.','El Nice City Pass incluye museos y transporte.','El mercado de Cours Saleya abre cada mañana excepto el lunes.','Reserve restaurantes al llegar en temporada alta.']
+}
+};
+
+const PLACES={
+culture:[{name:'Musée Matisse',tm:'10h00–13h00',ts:'14h00–17h00',desc:{fr:'Villa romaine du 17e siècle abritant la collection permanente Matisse.',en:'17th-century Roman villa housing the permanent Matisse collection.',es:'Villa romana del siglo XVII con la colección permanente Matisse.'},rating:'4.7 ⭐',travel:{fr:'🚌 Bus 15 · 20 min',en:'🚌 Bus 15 · 20 min',es:'🚌 Bus 15 · 20 min'},link:'https://www.musee-matisse-nice.org/',ll:{fr:'Réserver',en:'Book',es:'Reservar'},review:{fr:'"Collection exceptionnelle dans un cadre magnifique."',en:'"Exceptional collection in a magnificent setting."',es:'"Colección excepcional en un entorno magnífico."'}},{name:'Vieux-Nice',tm:'9h00–12h00',ts:'15h00–19h00',desc:{fr:'Le cœur historique de Nice : ruelles colorées, baroque italien et marché provençal.',en:'The historic heart of Nice: colorful alleys, Italian baroque and Provençal market.',es:'El corazón histórico de Niza: callejones coloridos, barroco italiano y mercado provenzal.'},rating:'4.8 ⭐',travel:{fr:'🚶 20 min · Tramway',en:'🚶 20 min · Tram',es:'🚶 20 min · Tranvía'},link:'https://www.nicetourisme.com/',ll:{fr:'Carte',en:'Map',es:'Mapa'},review:{fr:'"Incontournable. Ne manquez pas le Cours Saleya."',en:'"A must-see. Don\'t miss Cours Saleya."',es:'"Imprescindible. No te pierdas el Cours Saleya."'}}],
+gastro:[{name:'Chez René Socca',tm:'9h00–13h30',ts:null,desc:{fr:'La socca la plus célèbre de Nice. File d\'attente mais ça vaut le détour.',en:'The most famous socca in Nice. Queue but worth it.',es:'La socca más famosa de Niza. Cola pero vale la pena.'},rating:'4.6 ⭐',travel:{fr:'🚶 Vieux-Nice',en:'🚶 Old Nice',es:'🚶 Viejo Niza'},link:'https://www.nicetourisme.com/',ll:{fr:'Info',en:'Info',es:'Info'},review:{fr:'"Authentique et délicieux. Un must à Nice."',en:'"Authentic and delicious. A must in Nice."',es:'"Auténtico y delicioso. Un imprescindible."'}},{name:'L\'Aromate (★ Michelin)',tm:null,ts:'19h30–22h00',desc:{fr:'Table étoilée du chef Mickael Gracieux. Cuisine créative aux saveurs méditerranéennes.',en:'Michelin-starred restaurant by chef Mickael Gracieux. Creative Mediterranean cuisine.',es:'Restaurante con estrella Michelin del chef Mickael Gracieux.'},rating:'4.9 ⭐',travel:{fr:'🚌 Bus 12 · 15 min',en:'🚌 Bus 12 · 15 min',es:'🚌 Bus 12 · 15 min'},link:'https://www.laromate.fr/',ll:{fr:'Réserver',en:'Book',es:'Reservar'},review:{fr:'"Un repas mémorable. Service impeccable."',en:'"A memorable meal. Impeccable service."',es:'"Una comida memorable. Servicio impecable."'}}],
+nature:[{name:'Colline du Château',tm:'8h00–12h00',ts:'14h00–18h00',desc:{fr:'Vue panoramique sur la Baie des Anges. Accessible à pied ou par ascenseur.',en:'Panoramic view of the Bay of Angels. Accessible on foot or by elevator.',es:'Vista panorámica de la Bahía de los Ángeles.'},rating:'4.7 ⭐',travel:{fr:'🚶 25 min · Ascenseur gratuit',en:'🚶 25 min · Free elevator',es:'🚶 25 min · Ascensor gratuito'},link:'https://www.nicetourisme.com/',ll:{fr:'Info',en:'Info',es:'Info'},review:{fr:'"Vue époustouflante. Prévoir 1h minimum."',en:'"Breathtaking view. Allow at least 1 hour."',es:'"Vista impresionante. Prever al menos 1 hora."'}}],
+plage:[{name:'Plage Castel',tm:'9h00–13h00',ts:'14h00–18h00',desc:{fr:'La plus belle plage publique de Nice. Eau cristalline.',en:'The most beautiful public beach in Nice.',es:'La más bella playa pública de Niza.'},rating:'4.6 ⭐',travel:{fr:'🚶 25 min',en:'🚶 25 min',es:'🚶 25 min'},link:'https://www.nicetourisme.com/plages',ll:{fr:'Info',en:'Info',es:'Info'},review:{fr:'"L\'eau est incroyablement claire."',en:'"Incredibly clear water."',es:'"Agua increíblemente clara."'}},{name:'Hi Beach (privée)',tm:'10h00–13h00',ts:'14h00–19h00',desc:{fr:'Plage privée éco-design. Transats inclus, bar et restauration.',en:'Eco-design private beach. Sunbeds included.',es:'Playa privada eco-design.'},rating:'4.5 ⭐',travel:{fr:'🚌 Bus 9 · 15 min',en:'🚌 Bus 9 · 15 min',es:'🚌 Bus 9 · 15 min'},link:'https://www.hi-beach.net/',ll:{fr:'Réserver',en:'Book',es:'Reservar'},review:{fr:'"Meilleur rapport qualité/prix des plages privées."',en:'"Best value private beach."',es:'"Mejor relación calidad/precio."'}}],
+shopping:[{name:'Vieux-Nice Boutiques',tm:'10h00–13h00',ts:'15h00–19h00',desc:{fr:'Créateurs locaux, artisanat niçois, savons de Provence.',en:'Local designers, crafts, Provence soaps.',es:'Diseñadores locales, artesanía nizarda.'},rating:'4.6 ⭐',travel:{fr:'🚌 Bus 12 · 12 min',en:'🚌 Bus 12 · 12 min',es:'🚌 Bus 12 · 12 min'},link:'https://www.nicetourisme.com/',ll:{fr:'Plan',en:'Map',es:'Mapa'},review:{fr:'"Les savons locaux sont parfaits comme souvenirs."',en:'"Local soaps are perfect souvenirs."',es:'"Los jabones locales son perfectos souvenirs."'}}],
+nightlife:[{name:'Bar du Négresco',tm:null,ts:'18h00–01h00',desc:{fr:'Un verre dans l\'hôtel le plus mythique de la Côte d\'Azur.',en:'A drink in the most iconic hotel on the Côte d\'Azur.',es:'Una copa en el hotel más icónico de la Costa Azul.'},rating:'4.8 ⭐',travel:{fr:'🚶 10 min',en:'🚶 10 min',es:'🚶 10 min'},link:'https://www.negresco-nice.com/',ll:{fr:'Site web',en:'Website',es:'Web'},review:{fr:'"Un endroit hors du temps."',en:'"A place outside of time."',es:'"Un lugar fuera del tiempo."'}},{name:'Wayne\'s Bar',tm:null,ts:'20h00–02h00',desc:{fr:'Le bar le plus animé du Vieux-Nice avec concerts live.',en:'The liveliest bar in Old Nice with live concerts.',es:'El bar más animado del Viejo Niza.'},rating:'4.4 ⭐',travel:{fr:'🚶 Vieux-Nice',en:'🚶 Old Nice',es:'🚶 Viejo Niza'},link:'https://www.waynes.fr/',ll:{fr:'Programme',en:'Schedule',es:'Programa'},review:{fr:'"Musique live excellente chaque soir."',en:'"Excellent live music every night."',es:'"Excelente música en vivo cada noche."'}}],
+sport:[{name:'Vélo Bleu',tm:'8h00–11h00',ts:'15h00–18h00',desc:{fr:'Vélos en libre-service. Idéal pour longer la Promenade.',en:'Bike-sharing system. Perfect for the Promenade.',es:'Sistema de bicicletas compartidas.'},rating:'4.3 ⭐',travel:{fr:'📍 Bornes partout',en:'📍 Stations citywide',es:'📍 Estaciones por la ciudad'},link:'https://www.velobleu.org/',ll:{fr:'Trouver',en:'Find',es:'Buscar'},review:{fr:'"Parfait pour longer la mer."',en:'"Perfect for cycling by the sea."',es:'"Perfecto para ir junto al mar."'}}],
+bienetr:[{name:'Spa Nuxe Nice',tm:'9h00–12h00',ts:'14h00–19h00',desc:{fr:'Soin signature dans une cave voûtée du Vieux-Nice.',en:'Signature treatment in a vaulted cellar in Old Nice.',es:'Tratamiento en una bodega abovedada.'},rating:'4.8 ⭐',travel:{fr:'🚌 Bus 12 · 12 min',en:'🚌 Bus 12 · 12 min',es:'🚌 Bus 12 · 12 min'},link:'https://www.nuxe.com/spas',ll:{fr:'Réserver',en:'Book',es:'Reservar'},review:{fr:'"Le meilleur spa de Nice."',en:'"The best spa in Nice."',es:'"El mejor spa de Niza."'}}]};
+
+function fetchWeather(){fetch('https://api.open-meteo.com/v1/forecast?latitude=43.7102&longitude=7.2620&current_weather=true').then(r=>r.json()).then(d=>{const t=Math.round(d.current_weather.temperature),c=d.current_weather.weathercode;let ic='☀️',ds='Ensoleillé · Nice',adv='Guide adapté<br>à la météo';if(c>=61){ic='🌧️';ds='Pluvieux · Nice';adv='Activités couvertes<br>privilégiées'}else if(c>=51){ic='🌦️';ds='Nuageux · Nice';adv='Guide mixte'}document.getElementById('w-icon').textContent=ic;document.getElementById('w-temp').textContent=t+'°C';document.getElementById('w-desc').textContent=ds;document.getElementById('w-advice').innerHTML=adv;}).catch(()=>{});}
+fetchWeather();
+
+function dShowScreen(id){document.querySelectorAll('.d-screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function dGo(t){if(t==='load'){dStartLoading();return;}const r={2:dRenderQ2,3:dRenderQ3,4:dRenderQ4,5:dRenderQ5,6:dRenderQ6,7:dRenderQ7};if(r[t])r[t]();dShowScreen('ds'+t);}
+function dSelLang(l){DA.lang=l;['fr','en','es'].forEach(x=>document.getElementById('lb-'+x).classList.remove('sel'));document.getElementById('lb-'+l).classList.add('sel');}
+function dRenderQ2(){const q=DT[DA.lang].q2,L=DA.lang;document.getElementById('dqs2').textContent=q.step;document.getElementById('dqt2').textContent=q.text;document.getElementById('dqh2').textContent=q.hint;document.getElementById('dbtn2').textContent=DT[L].continue;document.getElementById('dbtn2').disabled=!DA.profile;document.getElementById('dqo2').innerHTML=q.opts.map(o=>`<div class="opt${DA.profile===o.v?' sel':''}" id="dp-${o.v}" onclick="dSelSingle('profile','${o.v}','dp-','dbtn2')"><div class="chk">✓</div><div class="opt-icon">${ICONS[o.i]||''}</div><div class="opt-label">${o.l}</div></div>`).join('');}
+function dRenderQ3(){const q=DT[DA.lang].q3,L=DA.lang;document.getElementById('dqs3').textContent=q.step;document.getElementById('dqt3').textContent=q.text;document.getElementById('dqh3').textContent=q.hint;document.getElementById('dbtn3').textContent=DT[L].continue;document.getElementById('dbtn3').disabled=DA.duration===null;document.getElementById('ddur-grid').innerHTML=q.dur.map(d=>`<div class="dur-btn${DA.duration===d.v?' sel':''}" id="dd-${d.v}" onclick="dSelDur(${d.v})"><div class="dur-num">${d.v===0?'1':d.v===7?'7+':d.v}</div><div class="dur-label">${d.l}</div></div>`).join('');}
+function dSelDur(v){DA.duration=v;document.querySelectorAll('[id^="dd-"]').forEach(e=>e.classList.remove('sel'));document.getElementById('dd-'+v).classList.add('sel');document.getElementById('dbtn3').disabled=false;}
+function dRenderQ4(){const q=DT[DA.lang].q4,L=DA.lang;document.getElementById('dqs4').textContent=q.step;document.getElementById('dqt4').textContent=q.text;document.getElementById('dqh4').textContent=q.hint;document.getElementById('ddl-arrive').textContent=q.arrive;document.getElementById('ddl-depart').textContent=q.depart;document.getElementById('dbtn4').textContent=DT[L].continue;document.getElementById('dbtn4').disabled=!(DA.dateIn&&DA.dateOut);const today=new Date().toISOString().split('T')[0];const di=document.getElementById('ddate-in'),dout=document.getElementById('ddate-out');di.min=today;dout.min=today;if(DA.dateIn)di.value=DA.dateIn;if(DA.dateOut)dout.value=DA.dateOut;}
+function dCheckDates(){DA.dateIn=document.getElementById('ddate-in').value;DA.dateOut=document.getElementById('ddate-out').value;document.getElementById('dbtn4').disabled=!(DA.dateIn&&DA.dateOut&&DA.dateOut>=DA.dateIn);}
+function dRenderQ5(){const q=DT[DA.lang].q5,L=DA.lang;document.getElementById('dqs5').textContent=q.step;document.getElementById('dqt5').textContent=q.text;document.getElementById('dqh5').textContent=q.hint;document.getElementById('dqh5b').textContent=q.hint2;document.getElementById('dbtn5').textContent=DT[L].continue;document.getElementById('dbtn5').disabled=!DA.moment;document.getElementById('dmoment-grid').innerHTML=q.moments.map(m=>`<div class="moment-btn${DA.moment===m.v?' sel':''}" id="dm-${m.v}" onclick="dSelMoment('${m.v}')"><div class="moment-icon">${ICONS[m.i]||''}</div><div class="moment-label">${m.l}</div><div class="moment-sub">${m.s}</div></div>`).join('');document.getElementById('dunavail-grid').innerHTML=q.jours.map(j=>`<div class="unavail-btn${DA.unavail.includes(j.v)?' sel':''}" id="du-${j.v}" onclick="dToggleUnavail('${j.v}')">${j.l}</div>`).join('');}
+function dSelMoment(v){DA.moment=v;document.querySelectorAll('[id^="dm-"]').forEach(e=>e.classList.remove('sel'));document.getElementById('dm-'+v).classList.add('sel');document.getElementById('dbtn5').disabled=false;}
+function dToggleUnavail(v){if(v==='0'){DA.unavail=[];document.querySelectorAll('[id^="du-"]').forEach(e=>e.classList.remove('sel'));document.getElementById('du-0').classList.add('sel');return;}document.getElementById('du-0').classList.remove('sel');const i=DA.unavail.indexOf(v);if(i>-1)DA.unavail.splice(i,1);else DA.unavail.push(v);document.getElementById('du-'+v).classList.toggle('sel');}
+function dRenderQ6(){const q=DT[DA.lang].q6,L=DA.lang;document.getElementById('dqs6').textContent=q.step;document.getElementById('dqt6').textContent=q.text;document.getElementById('dqh6').textContent=q.hint;document.getElementById('dbtn6').textContent=DT[L].continue;document.getElementById('dbtn6').disabled=DA.interests.length===0;document.getElementById('dint-grid').innerHTML=q.interests.map(it=>`<div class="int-btn${DA.interests.includes(it.v)?' sel':''}" id="di-${it.v}" onclick="dToggleInt('${it.v}')"><div class="int-icon">${ICONS[it.i]||''}</div><div><div class="int-label">${it.l}</div><div class="int-sub">${it.s}</div></div><div class="int-chk">✓</div></div>`).join('');dUpdateCount();}
+function dToggleInt(v){const i=DA.interests.indexOf(v);if(i>-1)DA.interests.splice(i,1);else DA.interests.push(v);document.getElementById('di-'+v).classList.toggle('sel');document.getElementById('dbtn6').disabled=DA.interests.length===0;dUpdateCount();}
+function dUpdateCount(){const c=DA.interests.length,arr=DT[DA.lang].q6.counts,el=document.getElementById('dsel-count');el.textContent=arr[Math.min(c,arr.length-1)];el.style.color=c>0?'var(--forest)':'var(--mid)';}
+function dRenderQ7(){const q=DT[DA.lang].q7,L=DA.lang;document.getElementById('dqs7').textContent=q.step;document.getElementById('dqt7').textContent=q.text;document.getElementById('dqh7').textContent=q.hint;document.getElementById('dbtn7').textContent=DT[L].generate;document.getElementById('dbtn7').disabled=!DA.budget;document.getElementById('dqo7').innerHTML=q.opts.map(o=>`<div class="opt${DA.budget===o.v?' sel':''}" id="db-${o.v}" onclick="dSelSingle('budget','${o.v}','db-','dbtn7')"><div class="chk">✓</div><div class="opt-icon">${ICONS[o.i]||''}</div><div class="opt-label">${o.l}</div><div class="opt-sub">${o.s}</div></div>`).join('');}
+function dSelSingle(f,v,p,b){DA[f]=v;document.querySelectorAll(`[id^="${p}"]`).forEach(e=>e.classList.remove('sel'));document.getElementById(p+v).classList.add('sel');document.getElementById(b).disabled=false;}
+function dStartLoading(){const L=DA.lang,ld=DT[L].loading;document.getElementById('dlt').textContent=ld.title;document.getElementById('dls-sub').textContent=ld.sub;ld.steps.forEach((s,i)=>{document.getElementById('dlss'+(i+1)).textContent=s;document.getElementById('dls'+(i+1)).classList.remove('show');});dShowScreen('ds-load');ld.steps.forEach((_,i)=>setTimeout(()=>document.getElementById('dls'+(i+1)).classList.add('show'),(i+1)*600+200));setTimeout(dBuildGuide,ld.steps.length*600+900);}
+function dBuildGuide(){
+  const L=DA.lang,profile=DA.profile||'couple',dur=DA.duration!==null?DA.duration:2,moment=DA.moment||'full',interests=DA.interests.length>0?DA.interests:['culture','gastro'],budget=DA.budget||'moyen',days=dur===0?1:Math.min(dur,5);
+  const pL={couple:{fr:'Romantique',en:'Romantic',es:'Romántico'},famille:{fr:'Famille',en:'Family',es:'Familia'},solo:{fr:'Solo',en:'Solo',es:'Solo'},amis:{fr:'Entre Amis',en:'With Friends',es:'Con Amigos'}};
+  const bL={eco:{fr:'Économique',en:'Budget',es:'Económico'},moyen:{fr:'Modéré',en:'Moderate',es:'Moderado'},premium:{fr:'Premium',en:'Premium',es:'Premium'}};
+  const durStr=dur===0?(L==='fr'?'1 journée':L==='en'?'1 day':'1 día'):`${dur}${dur===7?'+':''} ${L==='fr'?(dur<=1?'nuit':'nuits'):L==='en'?(dur<=1?'night':'nights'):(dur<=1?'noche':'noches')}`;
+  document.getElementById('dg-title').textContent=(L==='fr'?'Guide ':L==='en'?'Guide ':'Guía ')+pL[profile][L]+' — Nice';
+  let meta=`Nice · ${durStr} · ${bL[budget][L]}`;
+  if(DA.dateIn&&DA.dateOut){const fo={day:'numeric',month:'short'},lc=L==='fr'?'fr-FR':L==='en'?'en-GB':'es-ES';meta+=` · ${new Date(DA.dateIn).toLocaleDateString(lc,fo)} → ${new Date(DA.dateOut).toLocaleDateString(lc,fo)}`;}
+  document.getElementById('dg-meta').textContent=meta;
+  const mL={matin:{fr:'Matin',en:'Morning',es:'Mañana'},soir:{fr:'Soir',en:'Evening',es:'Tarde'},full:{fr:'Journée complète',en:'Full day',es:'Día completo'},we:{fr:'Week-end',en:'Weekend',es:'Fin de semana'}};
+  const intNames=interests.map(v=>DT[L].q6.interests.find(x=>x.v===v)?.l||v);
+  document.getElementById('dg-chips').innerHTML=[pL[profile][L],...intNames,mL[moment][L]].map(c=>`<span class="g-chip">${c}</span>`).join('');
+  let allPool=[];interests.forEach(int=>{if(PLACES[int])allPool=[...allPool,...PLACES[int]];});
+  const fBM=(p)=>{if(moment==='matin')return p.tm!==null;if(moment==='soir')return p.ts!==null;return true;};
+  let filtered=allPool.filter(fBM);if(filtered.length<3)filtered=allPool;
+  let budgetF=filtered;if(budget==='eco')budgetF=filtered.filter(p=>!['L\'Aromate (★ Michelin)','Hi Beach (privée)','Bar du Négresco'].includes(p.name));if(budgetF.length<2)budgetF=filtered;
+  let html='';const used=new Set();
+  for(let day=1;day<=days;day++){
+    const dl=days===1?DT[L].dayOnly:`${DT[L].dayLabel} ${day}`;
+    html+=`<div class="day-label-g">${dl}</div>`;
+    const dp=[];
+    for(const int of interests){if(dp.length>=4)break;const pool=(PLACES[int]||[]).filter(p=>!used.has(p.name)&&fBM(p));const pref=dp.length%2===0?'tm':'ts';const sorted=[...pool].sort((a,b)=>(a[pref]?-1:1));if(sorted.length>0){const pk=sorted[0];used.add(pk.name);dp.push({...pk,cat:int});}}
+    if(dp.length<2){for(const p of budgetF){if(!used.has(p.name)&&dp.length<3){used.add(p.name);dp.push(p);}}}
+    dp.forEach((p,i)=>{const tk=moment==='soir'?(p.ts||p.tm):(p.tm||p.ts);const cl=DT[L].q6.catLabels[p.cat]||'';
+      html+=`<div class="place-card"><div class="place-num">${i+1}</div><div class="place-body"><div class="place-time">${tk||'—'}</div><div class="place-name">${p.name}</div>${cl?`<span class="place-cat">${cl}</span>`:''}<div class="place-desc">${p.desc[L]}</div><div class="place-review">${p.review[L]}</div><div class="place-footer"><div style="display:flex;align-items:center;gap:5px"><span class="rating">${p.rating}</span><span class="travel-tag">${p.travel[L]}</span></div><a class="place-link" href="${p.link}" target="_blank">${p.ll[L]}</a></div></div></div>`;});
+  }
+  html+=`<div class="tips-card"><div class="tips-label">${DT[L].tipsTitle}</div>`;
+  DT[L].tips.forEach(t=>html+=`<div class="tip-item"><div class="tip-dot"></div><div class="tip-text">${t}</div></div>`);
+  html+='</div>';
+  document.getElementById('dguide-body').innerHTML=html;
+  dShowScreen('ds-guide');
+}
+async function sendForm(){
+  const email=document.getElementById('contact-email').value.trim();
+  const msg=document.getElementById('form-msg');
+  if(!email||!email.includes('@')){msg.style.display='block';msg.style.color='var(--bark)';msg.textContent='Veuillez saisir une adresse email valide.';return;}
+  const btn=document.querySelector('#form-wrap .btn-primary');
+  btn.textContent='Envoi…';btn.disabled=true;
+  try{
+    const fd=new FormData();
+    fd.append('email',email);
+    fd.append('_subject','Nouvelle demande de démo — Escapy');
+    const res=await fetch('https://formspree.io/f/xkokdddp',{method:'POST',headers:{'Accept':'application/json'},body:fd});
+    const data=await res.json();
+    if(res.ok&&data.ok!==false){
+      document.getElementById('form-wrap').innerHTML='<p style="font-size:14px;color:var(--forest);font-weight:500">✓ Demande envoyée — nous vous recontactons sous 48h.</p>';
+    }else{
+      msg.style.display='block';msg.style.color='var(--bark)';msg.textContent='Une erreur est survenue. Écrivez-nous à contact@escapy.fr';
+      btn.textContent='Demander une démo';btn.disabled=false;
+    }
+  }catch(e){
+    msg.style.display='block';msg.style.color='var(--bark)';msg.textContent='Une erreur est survenue. Écrivez-nous à contact@escapy.fr';
+    btn.textContent='Demander une démo';btn.disabled=false;
+  }
+}
+document.getElementById('contact-email')?.addEventListener('keydown',e=>{if(e.key==='Enter')sendForm();});
+
+async function dDlPDF(){
+  const L=DA.lang,btn=document.querySelector('.pdf-btn');
+  btn.textContent='⏳ Génération…';btn.disabled=true;
+  if(!window.jspdf){await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
+  const {jsPDF}=window.jspdf,doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=210,H=297,gold=[201,169,110],navy=[26,35,50],cream=[250,247,242],white=[255,255,255],muted=[138,138,138],dark=[44,44,44];
+  doc.setFillColor(...navy);doc.rect(0,0,W,42,'F');
+  doc.setDrawColor(...gold);doc.setLineWidth(0.5);doc.line(20,10,190,10);
+  doc.setTextColor(...gold);doc.setFontSize(8);doc.setFont('helvetica','normal');
+  doc.text('ESCAPY · GUIDE PERSONNALISÉ',W/2,16,{align:'center'});
+  doc.setTextColor(...white);doc.setFontSize(20);doc.setFont('helvetica','bold');
+  doc.text('Hôtel La Belle Époque',W/2,26,{align:'center'});
+  doc.setDrawColor(...gold);doc.setLineWidth(0.3);doc.line(90,29,120,29);
+  doc.setTextColor(...gold);doc.setFontSize(8);doc.setFont('helvetica','normal');
+  doc.text('Votre guide personnalisé par Escapy',W/2,35,{align:'center'});
+  doc.setDrawColor(...gold);doc.setLineWidth(0.5);doc.line(20,38,190,38);
+  doc.setFillColor(...cream);doc.rect(0,42,W,18,'F');
+  const profile=DA.profile||'couple',dur=DA.duration!==null?DA.duration:2,budget=DA.budget||'moyen';
+  const pL2={couple:'En couple',famille:'En famille',solo:'Solo',amis:'Entre amis'};
+  const durStr=dur===0?'1 journée':`${dur}${dur===7?'+':''} ${dur<=1?'nuit':'nuits'}`;
+  const intNames=DA.interests.map(v=>DT[DA.lang].q6.interests.find(x=>x.v===v)?.l||v).join(', ');
+  doc.setTextColor(...navy);doc.setFontSize(9);doc.setFont('helvetica','bold');
+  doc.text(pL2[profile]||'',20,50);doc.text('·',65,50);doc.text(durStr,70,50);
+  doc.setFont('helvetica','normal');doc.setTextColor(...muted);doc.setFontSize(8);
+  doc.text(`Intérêts : ${intNames}`,20,57);
+  let y=68;const days=dur===0?1:Math.min(dur,5),moment=DA.moment||'full',interests=DA.interests.length>0?DA.interests:['culture','gastro'];
+  const allP=[];interests.forEach(int=>{if(PLACES[int])allP.push(...PLACES[int].map(p=>({...p,cat:int})));});
+  const used2=new Set();
+  for(let day=1;day<=days;day++){
+    if(y>240){doc.addPage();y=20;}
+    doc.setFillColor(...navy);doc.roundedRect(14,y,182,8,2,2,'F');
+    doc.setTextColor(...gold);doc.setFontSize(9);doc.setFont('helvetica','bold');
+    doc.text(days===1?'Programme de la journée':`Jour ${day}`,W/2,y+5.5,{align:'center'});y+=13;
+    const dp=[];
+    for(const int of interests){if(dp.length>=4)break;const pool=(PLACES[int]||[]).filter(p=>!used2.has(p.name));const pref=dp.length%2===0?'tm':'ts';const sorted=[...pool].sort((a,b)=>(a[pref]?-1:1));if(sorted.length>0){const pk=sorted[0];used2.add(pk.name);dp.push({...pk,cat:int});}}
+    if(dp.length<2){for(const p of allP){if(!used2.has(p.name)&&dp.length<3){used2.add(p.name);dp.push(p);}}}
+    for(let i=0;i<dp.length;i++){
+      const p=dp[i];if(y>265){doc.addPage();y=20;}
+      const tk=moment==='soir'?(p.ts||p.tm):(p.tm||p.ts);
+      doc.setFillColor(...white);doc.setDrawColor(226,217,204);doc.setLineWidth(0.3);doc.roundedRect(14,y,182,30,2,2,'FD');
+      doc.setFillColor(...navy);doc.circle(22,y+8,4,'F');
+      doc.setTextColor(...gold);doc.setFontSize(8);doc.setFont('helvetica','bold');doc.text(String(i+1),22,y+10.5,{align:'center'});
+      doc.setTextColor(...gold);doc.setFontSize(7);doc.text(tk||'—',30,y+6);
+      doc.setTextColor(...navy);doc.setFontSize(10);doc.setFont('helvetica','bold');doc.text(p.name,30,y+13);
+      doc.setTextColor(...dark);doc.setFontSize(8);doc.setFont('helvetica','normal');
+      const dl=doc.splitTextToSize(p.desc[DA.lang],148);doc.text(dl[0],30,y+20);
+      doc.setTextColor(...muted);doc.setFontSize(7.5);doc.text(`${p.rating}  |  ${p.travel[DA.lang]}`,30,y+27);
+      doc.setTextColor(...gold);doc.setFontSize(7.5);const lx=W-16-doc.getTextWidth(p.ll[DA.lang])-2;doc.textWithLink(p.ll[DA.lang],lx,y+27,{url:p.link});
+      y+=34;
+    }y+=4;
+  }
+  if(y>250){doc.addPage();y=20;}
+  doc.setFillColor(...navy);doc.roundedRect(14,y,182,8,2,2,'F');
+  doc.setTextColor(...gold);doc.setFontSize(9);doc.setFont('helvetica','bold');
+  doc.text(DT[DA.lang].tipsTitle,W/2,y+5.5,{align:'center'});y+=13;
+  DT[DA.lang].tips.forEach(tip=>{if(y>275){doc.addPage();y=20;}doc.setFillColor(240,235,224);doc.roundedRect(14,y,182,10,2,2,'F');doc.setTextColor(...navy);doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.setFillColor(...gold);doc.circle(20,y+5,1.5,'F');doc.text(doc.splitTextToSize(tip,166)[0],25,y+6);y+=13;});
+  const fY=H-18;doc.setFillColor(...navy);doc.rect(0,fY-4,W,22,'F');
+  doc.setDrawColor(...gold);doc.setLineWidth(0.3);doc.line(14,fY-2,196,fY-2);
+  doc.setTextColor(...gold);doc.setFontSize(9);doc.setFont('helvetica','bold');doc.text('Hôtel La Belle Époque · Powered by Escapy',W/2,fY+4,{align:'center'});
+  doc.setTextColor(200,195,185);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+  doc.text('📞 +33 4 93 XX XX XX  ·  📍 12 Promenade des Anglais, Nice',W/2,fY+10,{align:'center'});
+  doc.setTextColor(150,140,120);doc.setFontSize(6.5);
+  doc.text('Vérifié · Aucune donnée conservée · Conforme RGPD · escapy.fr',W/2,fY+16,{align:'center'});
+  const tp=doc.internal.getNumberOfPages();for(let p=1;p<=tp;p++){doc.setPage(p);doc.setTextColor(...muted);doc.setFontSize(7);doc.text(`${p} / ${tp}`,W-14,H-4,{align:'right'});}
+  doc.save('Guide-Nice-Escapy.pdf');
+  btn.innerHTML='📄 Télécharger mon guide en PDF';btn.disabled=false;
+}
+function dRestart(){Object.assign(DA,{lang:'fr',profile:null,duration:null,dateIn:null,dateOut:null,moment:null,unavail:[],interests:[],budget:null});['fr','en','es'].forEach(l=>{const el=document.getElementById('lb-'+l);if(el)el.classList.remove('sel');});document.getElementById('lb-fr').classList.add('sel');dShowScreen('ds1');}
+</script>
+</body>
+</html>
