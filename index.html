@@ -341,7 +341,7 @@ footer a:hover{color:var(--dark)}
 <div class="hero">
   <div class="hero-badge"><span class="badge-dot"></span>Solution B2B · Hôtellerie & Tourisme</div>
   <h1>L'expérience voyage <em>sur-mesure</em><br>pour vos clients</h1>
-  <p class="hero-sub">Un QR code dans votre hôtel. Un guide touristique personnalisé en quelques secondes. Zéro friction pour le client, valeur immédiate pour votre établissement.</p>
+  <p class="hero-sub">Un QR code dans votre hôtel. Un guide touristique personnalisé en quelques secondes. Une expérience simplifiée pour le client, synonyme de valeur immédiate pour votre établissement.</p>
   <div class="ctas">
     <button class="btn-primary" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">Voir la démo</button>
     <button class="btn-ghost" onclick="document.getElementById('concept').scrollIntoView({behavior:'smooth'})">Découvrir le concept</button>
@@ -693,7 +693,7 @@ footer a:hover{color:var(--dark)}
 function toggleFaq(btn){const item=btn.parentElement;const wasOpen=item.classList.contains('open');document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));if(!wasOpen)item.classList.add('open');}
 function toggleAcc(btn){const item=btn.parentElement;const wasOpen=item.classList.contains('open');item.closest('.acc-list').querySelectorAll('.acc-item').forEach(i=>i.classList.remove('open'));if(!wasOpen)item.classList.add('open');}
 function toggleFeat(row){const wasOpen=row.classList.contains('open');document.querySelectorAll('.feat-row').forEach(r=>r.classList.remove('open'));if(!wasOpen)row.classList.add('open');}
-const DA={lang:'fr',profile:null,duration:null,dateIn:null,dateOut:null,arrivalHour:null,departureHour:null,moments:[],unavail:[],interests:[],budget:null};
+const DA={lang:'fr',profile:null,duration:null,dateIn:null,dateOut:null,arrivalHour:null,departureHour:null,moments:[],unavail:[],interests:[],budget:null,mobility:null};
 
 /* ── DONNÉES LIEUX ─────────────────────────────────────────────────────────
    Structure : start/end en minutes depuis minuit pour anti-chevauchement
@@ -1284,6 +1284,106 @@ brunch:[
    review:{fr:'"Le brunch le plus élégant de Nice. Les mezze sont exceptionnels."',en:'"The most elegant brunch in Nice. The mezze are exceptional."',es:'"El brunch más elegante de Niza. Los mezze son excepcionales."'},
    budget:['premium'],tags:['couple','amis']}
 ]
+,
+
+/* ═══════════════════════════════════════════════════════════════════
+   ART & GALERIES
+═══════════════════════════════════════════════════════════════════ */
+art:[
+  {name:'Galeries d\'Art — Vieux-Nice',zone:'vieux_nice',start:840,end:1080,slot:'apm',
+   desc:{fr:'Le Vieux-Nice abrite des dizaines de galeries d\'art contemporain : galerie Depardieu, galerie des Ponchettes (expositions temporaires gratuites gérées par la Ville) et ateliers d\'artistes ouverts au public dans les ruelles baroques.',en:'Old Nice houses dozens of contemporary art galleries: Galerie Depardieu, Galerie des Ponchettes (free temporary exhibitions run by the city) and artists studios open to the public in baroque alleyways.',es:'El Viejo Niza alberga decenas de galerías de arte contemporáneo: Galerie Depardieu, Galerie des Ponchettes (exposiciones temporales gratuitas) y talleres de artistas abiertos al público.'},
+   rating:'4.5',travel:{fr:'À pied depuis Place Masséna — 10 min',en:'On foot from Place Masséna — 10 min',es:'A pie desde Place Masséna — 10 min'},
+   link:'https://www.explorenicecotedazur.com/',ll:{fr:'Découvrir',en:'Explore',es:'Descubrir'},
+   review:{fr:'"Chaque ruelle du Vieux-Nice cache une galerie ou un atelier. Promenez-vous lentement."',en:'"Every alleyway in Old Nice hides a gallery or studio. Walk slowly."',es:'"Cada callejuela del Viejo Niza esconde una galería o un taller. Camina despacio."'},
+   budget:['eco','moyen','premium'],tags:['couple','solo','culture']},
+
+  {name:'Fondation Maeght — Saint-Paul-de-Vence',zone:'excursion',start:540,end:720,slot:'matin',
+   desc:{fr:'Une des plus importantes fondations d\'art moderne au monde. Sculptures de Giacometti, céramiques de Miró, mobiles de Calder et toiles de Braque dans un cadre de pinèdes. Une expérience artistique totale à 45 min de Nice.',en:'One of the most important modern art foundations in the world. Giacometti sculptures, Miró ceramics, Calder mobiles and Braque canvases in a pine forest setting. A total artistic experience 45 min from Nice.',es:'Una de las fundaciones de arte moderno más importantes del mundo. Esculturas de Giacometti, cerámicas de Miró, móviles de Calder y telas de Braque en un marco de pinos. Experiencia artística total.'},
+   rating:'4.8',travel:{fr:'Bus 400 depuis Nice — 45 min (1,50€)',en:'Bus 400 from Nice — 45 min (€1.50)',es:'Autobús 400 desde Niza — 45 min (1,50€)'},
+   link:'https://www.fondation-maeght.com/',ll:{fr:'Réserver',en:'Book',es:'Reservar'},
+   review:{fr:'"Une des expériences artistiques les plus belles de France. Le cadre est magique."',en:'"One of the most beautiful artistic experiences in France. The setting is magical."',es:'"Una de las experiencias artísticas más bellas de Francia. El marco es mágico."'},
+   budget:['moyen','premium'],tags:['culture','couple','solo','amis']},
+
+  {name:'Galerie des Ponchettes — Expo Gratuite',zone:'vieux_nice',start:840,end:1020,slot:'apm',
+   desc:{fr:'Galerie municipale gratuite dans une ancienne caserne du 18e siècle. Expositions temporaires d\'artistes contemporains régionaux et internationaux. Programme renouvelé tous les deux mois. Vue sur la mer.',en:'Free municipal gallery in an 18th-century former barracks. Temporary exhibitions of regional and international contemporary artists. Programme renewed every two months. Sea view.',es:'Galería municipal gratuita en un antiguo cuartel del siglo XVIII. Exposiciones temporales de artistas contemporáneos regionales e internacionales. Programa renovado cada dos meses.'},
+   rating:'4.3',travel:{fr:'À pied depuis Place Masséna — 8 min',en:'On foot from Place Masséna — 8 min',es:'A pie desde Place Masséna — 8 min'},
+   link:'https://www.explorenicecotedazur.com/',ll:{fr:'Voir le programme',en:'View programme',es:'Ver programa'},
+   review:{fr:'"Gratuit, surprenant et souvent excellent. Un incontournable méconnu de Nice."',en:'"Free, surprising and often excellent. An underrated must-see of Nice."',es:'"Gratuito, sorprendente y a menudo excelente. Un imprescindible poco conocido de Niza."'},
+   budget:['eco','moyen','premium'],tags:['culture','solo','couple']}
+],
+
+/* ═══════════════════════════════════════════════════════════════════
+   ARTISANAT & PRODUITS LOCAUX
+═══════════════════════════════════════════════════════════════════ */
+artisanat:[
+  {name:'Moulin Alziari — Dégustation & Boutique',zone:'vieux_nice',start:600,end:720,slot:'matin',
+   desc:{fr:'Le dernier moulin à huile d\'olive en activité à Nice depuis 1868. Dégustation guidée des huiles AOP niçoises, savons artisanaux, tapenade, anchoïade et produits du terroir. Le meilleur souvenir authentique de Nice.',en:'The last active olive oil mill in Nice since 1868. Guided tasting of Nice AOP oils, artisan soaps, tapenade, anchoïade and terroir products. The best authentic souvenir from Nice.',es:'El último molino de aceite de oliva activo en Niza desde 1868. Degustación guiada de aceites AOP nizardos, jabones artesanales, tapenade y productos del terruño.'},
+   rating:'4.7',travel:{fr:'Vieux-Nice — à pied depuis Cours Saleya (5 min)',en:'Old Nice — on foot from Cours Saleya (5 min)',es:'Viejo Niza — a pie desde el Cours Saleya (5 min)'},
+   link:'https://www.alziari.com.fr/',ll:{fr:'Voir le site',en:'Visit website',es:'Ver sitio web'},
+   review:{fr:'"Incontournable. L\'huile Alziari est unique en France. Repartez avec une bouteille."',en:'"Essential. Alziari oil is unique in France. Leave with a bottle."',es:'"Imprescindible. El aceite Alziari es único en Francia. Llévate una botella."'},
+   budget:['eco','moyen','premium'],tags:['famille','couple','culture']},
+
+  {name:'Ateliers Céramique — Vieux-Nice',zone:'vieux_nice',start:840,end:1080,slot:'apm',
+   desc:{fr:'Plusieurs céramistes proposent dans les ruelles du Vieux-Nice des pièces uniques aux motifs méditerranéens : assiettes, bols, carreaux de faïence inspirés de la tradition provençale. Possibilité d\'atelier de création pour adultes et enfants.',en:'Several ceramicists in Old Nice alleyways offer unique pieces with Mediterranean designs: plates, bowls, faience tiles inspired by Provençal tradition. Creation workshops available for adults and children.',es:'Varios ceramistas en las callejuelas del Viejo Niza ofrecen piezas únicas con motivos mediterráneos. Talleres de creación disponibles para adultos y niños.'},
+   rating:'4.5',travel:{fr:'À pied depuis Place Masséna — 10 min',en:'On foot from Place Masséna — 10 min',es:'A pie desde Place Masséna — 10 min'},
+   link:'https://www.explorenicecotedazur.com/',ll:{fr:'Découvrir',en:'Explore',es:'Descubrir'},
+   review:{fr:'"Des pièces uniques et authentiques. Un souvenir bien plus beau qu\'un magasin de souvenirs."',en:'"Unique and authentic pieces. A much more beautiful souvenir than a gift shop."',es:'"Piezas únicas y auténticas. Un recuerdo mucho más bonito que una tienda de souvenirs."'},
+   budget:['eco','moyen','premium'],tags:['couple','culture','famille']},
+
+  {name:'Atelier Parfum Molinard — Créez votre Parfum',zone:'centre',start:840,end:1020,slot:'apm',
+   desc:{fr:'La boutique niçoise de la maison Molinard propose un atelier pour créer son propre parfum personnalisé. Découverte des notes de tête, de cœur et de fond, sélection des essences et création de son eau de parfum unique. Dès 4 ans.',en:'The Nice boutique of Maison Molinard offers a workshop to create your own personalised perfume. Discover top, heart and base notes, select essences and create your unique eau de parfum. From age 4.',es:'La boutique nizarda de Maison Molinard ofrece un taller para crear tu propio perfume personalizado. Descubre las notas y crea tu agua de perfume única. Desde 4 años.'},
+   rating:'4.6',travel:{fr:'À pied depuis Place Masséna — 5 min',en:'On foot from Place Masséna — 5 min',es:'A pie desde Place Masséna — 5 min'},
+   link:'https://www.molinard.com/',ll:{fr:'Réserver',en:'Book',es:'Reservar'},
+   review:{fr:'"Activité magique pour petits et grands. On repart avec son parfum unique et inoubliable."',en:'"Magical activity for young and old. You leave with your unique, unforgettable perfume."',es:'"Actividad mágica para pequeños y grandes. Te vas con tu perfume único e inolvidable."'},
+   budget:['moyen','premium'],tags:['famille','couple','amis']},
+
+  {name:'Marché du Cours Saleya — Rencontres Producteurs',zone:'vieux_nice',start:480,end:720,slot:'matin',
+   desc:{fr:'Au-delà du marché, rencontrez directement les producteurs niçois : fromagers de l\'arrière-pays, apiculteurs des collines, maraîchers bio des environs. Le vrai visage du terroir niçois raconté par ceux qui le font.',en:'Beyond the market, meet Nice producers directly: cheese-makers from the hinterland, hill beekeepers, organic market gardeners from the surrounding area. The true face of Nice terroir told by those who make it.',es:'Más allá del mercado, conozca directamente a los productores nizardos: queseros del interior, apicultores de las colinas, horticultores ecológicos. El verdadero rostro del terruño nizardo.'},
+   rating:'4.8',travel:{fr:'Tramway T1 — 12 min depuis Place Masséna',en:'Tram T1 — 12 min from Place Masséna',es:'Tranvía T1 — 12 min desde Place Masséna'},
+   link:'https://www.explorenicecotedazur.com/',ll:{fr:'Voir le plan',en:'View map',es:'Ver mapa'},
+   review:{fr:'"La meilleure façon de comprendre la cuisine niçoise : en échangeant avec les producteurs."',en:'"The best way to understand Nice cuisine: by talking to the producers."',es:'"La mejor forma de entender la cocina nizarda: hablando con los productores."'},
+   budget:['eco','moyen','premium'],tags:['famille','culture','couple']},
+
+  {name:'Verrerie de Biot — Soufflage de Verre',zone:'excursion',start:840,end:1080,slot:'apm',
+   desc:{fr:'Depuis 1956, la Verrerie de Biot (label Entreprise du Patrimoine Vivant) a inventé le verre bullé. Visitez la Halle des verriers, observez les maîtres-verriers au travail et, si vous le souhaitez, soufflez votre propre pièce unique (68€). Visite guidée 9€. Village médiéval de Biot à découvrir juste après.',en:'Since 1956, the Verrerie de Biot (Living Heritage Company label) invented bubble glass. Visit the glassblowers\' hall, watch master glassblowers at work and, if you wish, blow your own unique piece (€68). Guided tour €9. Medieval village of Biot to discover just after.',es:'Desde 1956, la Verrerie de Biot (etiqueta Empresa del Patrimonio Vivo) inventó el vidrio burbuja. Visite la sala de sopladores, observe a los maestros vidrieros en acción y, si lo desea, sople su propia pieza única (68€). Visita guiada 9€.'},
+   rating:'4.7',travel:{fr:'Train TER Nice→Antibes puis bus — 45 min au total',en:'TER train Nice→Antibes then bus — 45 min total',es:'Tren TER Niza→Antibes luego autobús — 45 min en total'},
+   link:'https://www.verreriebiot.com/',ll:{fr:'Réserver',en:'Book',es:'Reservar'},
+   review:{fr:'"Voir souffler le verre et repartir avec sa propre création, une expérience magique et unique."',en:'"Watching glass blowing and leaving with your own creation — a magical and unique experience."',es:'"Ver soplar el vidrio y irse con tu propia creación, una experiencia mágica y única."'},
+   budget:['moyen','premium'],tags:['famille','couple','amis','artisanat']}
+],
+
+/* ═══════════════════════════════════════════════════════════════════
+   INSOLITE & LIEUX CACHÉS
+═══════════════════════════════════════════════════════════════════ */
+insolite:[
+  {name:'Chapelles Baroques Secrètes',zone:'vieux_nice',start:600,end:720,slot:'matin',
+   desc:{fr:'Nice cache plus de 30 chapelles baroques dans ses ruelles. La Chapelle de la Miséricorde, la Chapelle des Pénitents Blancs, la Chapelle Sainte-Réparate — chacune recèle des trésors artistiques extraordinaires ignorés par la plupart des visiteurs.',en:'Nice hides more than 30 baroque chapels in its alleyways. The Chapelle de la Miséricorde, Chapelle des Pénitents Blancs, Chapelle Sainte-Réparate — each holds extraordinary artistic treasures ignored by most visitors.',es:'Niza esconde más de 30 capillas barrocas en sus callejuelas. La Capilla de la Misericordia, la Capilla de los Penitentes Blancos, la Capilla de Santa Reparata — cada una alberga tesoros artísticos extraordinarios.'},
+   rating:'4.7',travel:{fr:'À pied dans le Vieux-Nice',en:'On foot in Old Nice',es:'A pie en el Viejo Niza'},
+   link:'https://www.explorenicecotedazur.com/',ll:{fr:'Voir la carte',en:'View map',es:'Ver mapa'},
+   review:{fr:'"Les chapelles cachées de Nice sont des chefs-d\'œuvre baroques méconnus. Gratuit et fascinant."',en:'"Nice hidden chapels are underrated baroque masterpieces. Free and fascinating."',es:'"Las capillas ocultas de Niza son obras maestras barrocas poco conocidas. Gratuitas y fascinantes."'},
+   budget:['eco','moyen','premium'],tags:['culture','solo','couple']},
+
+  {name:'Balade Street Art — Quartier des Musiciens',zone:'centre',start:840,end:1020,slot:'apm',
+   desc:{fr:'Le quartier des Musiciens concentre une scène street art remarquable : œuvres de Ben Vautier (artiste niçois iconique, inventeur du Nouveau Réalisme), fresques géantes et tags artistiques. Balade libre ou guidée entre art et architecture.',en:'The Musiciens district concentrates a remarkable street art scene: works by Ben Vautier (iconic Nice artist, inventor of New Realism), giant frescoes and artistic tags. Free or guided walk between art and architecture.',es:'El barrio de los Músicos concentra una notable escena de street art: obras de Ben Vautier (artista nizardo icónico, inventor del Nuevo Realismo), frescos gigantes y tags artísticos.'},
+   rating:'4.4',travel:{fr:'À pied depuis Place Masséna — 10 min',en:'On foot from Place Masséna — 10 min',es:'A pie desde Place Masséna — 10 min'},
+   link:'https://www.explorenicecotedazur.com/',ll:{fr:'Découvrir',en:'Explore',es:'Descubrir'},
+   review:{fr:'"Nice est une galerie à ciel ouvert. Le street art du quartier des Musiciens est bluffant."',en:'"Nice is an open-air gallery. The Musiciens district street art is stunning."',es:'"Niza es una galería al aire libre. El street art del barrio de los Músicos es impresionante."'},
+   budget:['eco','moyen','premium'],tags:['amis','couple','solo','culture']},
+
+  {name:'Villages Médiévaux de l\'Arrière-Pays',zone:'excursion',start:480,end:960,slot:'matin',
+   desc:{fr:'À 1h de Nice, des villages médiévaux hors du temps : Peillon (intact depuis le Moyen-Âge), Sainte-Agnès (le village perché habité le plus haut d\'Europe à 671m), Peille et Gorbio. Un dépaysement total, loin des foules.',en:'1 hour from Nice, timeless medieval villages: Peillon (intact since the Middle Ages), Sainte-Agnès (the highest inhabited perched village in Europe at 671m), Peille and Gorbio. A complete change of scenery, far from crowds.',es:'A 1h de Niza, pueblos medievales fuera del tiempo: Peillon (intacto desde la Edad Media), Sainte-Agnès (el pueblo encaramado habitado más alto de Europa a 671m), Peille y Gorbio.'},
+   rating:'4.8',travel:{fr:'Voiture recommandée — 1h depuis Nice (bus le week-end)',en:'Car recommended — 1h from Nice (bus at weekends)',es:'Coche recomendado — 1h desde Niza (autobús los fines de semana)'},
+   link:'https://www.explorenicecotedazur.com/',ll:{fr:'Voir la carte',en:'View map',es:'Ver mapa'},
+   review:{fr:'"Peillon est l\'un des plus beaux villages de France. Magique et hors du temps."',en:'"Peillon is one of the most beautiful villages in France. Magical and timeless."',es:'"Peillon es uno de los pueblos más bellos de Francia. Mágico y fuera del tiempo."'},
+   budget:['eco','moyen','premium'],tags:['couple','nature','culture','solo']},
+
+  {name:'Nocturne Musée Chagall — Soirée Spéciale',zone:'cimiez',start:1080,end:1320,slot:'soir',
+   desc:{fr:'Le Musée Chagall organise des nocturnes régulières avec concerts de musique de chambre et expositions temporaires en soirée. Une façon unique de vivre les œuvres de Chagall dans une ambiance intime et lumineuse.',en:'The Chagall Museum organises regular evening openings with chamber music concerts and temporary exhibitions. A unique way to experience Chagall works in an intimate and luminous atmosphere.',es:'El Museo Chagall organiza noches regulares con conciertos de música de cámara y exposiciones temporales por la noche. Una forma única de vivir las obras de Chagall en un ambiente íntimo.'},
+   rating:'4.8',travel:{fr:'Bus 15 — 15 min depuis Place Masséna',en:'Bus 15 — 15 min from Place Masséna',es:'Bus 15 — 15 min desde Place Masséna'},
+   link:'https://www.musees-nationaux-alpesmaritimes.fr/chagall/',ll:{fr:'Voir le programme',en:'View programme',es:'Ver programa'},
+   review:{fr:'"Vivre les couleurs de Chagall à la lumière du soir et d\'un concert, c\'est inoubliable."',en:'"Experiencing Chagall colours in the evening light with a concert is unforgettable."',es:'"Vivir los colores de Chagall a la luz del atardecer con un concierto es inolvidable."'},
+   budget:['moyen','premium'],tags:['couple','solo','culture']}
+]
 
 };
 
@@ -1292,11 +1392,11 @@ const DT={
 fr:{
   continue:'Continuer →',generate:'Générer mon guide →',
   q2:{step:'Étape 2 / 8',text:'Vous voyagez…',hint:'Cela nous aide à adapter les recommandations.',opts:[{v:'couple',i:'couple',l:'En couple'},{v:'famille',i:'famille',l:'En famille'},{v:'solo',i:'solo',l:'Solo'},{v:'amis',i:'amis',l:'Entre amis'}]},
-  q3:{step:'Étape 3 / 8',text:'Durée de votre séjour ?',hint:'Nombre de nuits à Nice.',dur:[{v:0,l:'Journée'},{v:1,l:'1 nuit'},{v:2,l:'2 nuits'},{v:3,l:'3 nuits'},{v:5,l:'5 nuits'},{v:7,l:'7 nuits+'}]},
+  q3:{step:'Étape 3 / 8',text:'Durée de votre séjour ?',hint:'Nombre de nuits à Nice.',dur:[{v:0,l:'Journée'},{v:1,l:'1 nuit'},{v:2,l:'2 nuits'},{v:3,l:'3 nuits'},{v:4,l:'4 nuits'},{v:5,l:'5 nuits'},{v:7,l:'7 nuits+',custom:true}]},
   q4:{step:'Étape 4 / 8',text:'Vos dates de séjour ?',hint:'Pour adapter le guide à la saison et aux événements locaux.',arrive:'Arrivée',depart:'Départ',arrHour:'Heure d\'arrivée',depHour:'Heure de départ'},
   q5:{step:'Étape 5 / 8',text:'Vos horaires d\'arrivée et de départ ?',hint:'Nous n\'inclurons que les activités accessibles selon vos horaires.',arrHour:'Heure d\'arrivée à l\'hôtel',depHour:'Heure de départ de l\'hôtel'},
   q6:{step:'Étape 6 / 8',text:'Quand souhaitez-vous sortir ?',hint:'Vous pouvez sélectionner plusieurs créneaux.',hint2:'Jours indisponibles (optionnel)',moments:[{v:'matin',i:'matin',l:'Matin',s:'8h – 14h'},{v:'apm',i:'full',l:'Après-midi',s:'14h – 19h'},{v:'soir',i:'soir',l:'Soirée',s:'19h – 23h'},{v:'full',i:'full',l:'Journée',s:'Toute la journée'}],jours:[{v:'0',l:'Aucun'},{v:'1',l:'Lun'},{v:'2',l:'Mar'},{v:'3',l:'Mer'},{v:'4',l:'Jeu'},{v:'5',l:'Ven'},{v:'6',l:'Sam'},{v:'7',l:'Dim'}]},
-  q7:{step:'Étape 7 / 8',text:'Vos centres d\'intérêt ?',hint:'Sélectionnez tout ce qui vous inspire.',interests:[{v:'culture',i:'culture',l:'Culture',s:'Musées, monuments'},{v:'gastro',i:'gastro',l:'Gastronomie',s:'Restaurants, marchés'},{v:'nature',i:'nature',l:'Nature',s:'Parcs, balades'},{v:'plage',i:'plage',l:'Plage',s:'Mer & activités'},{v:'excursion',i:'culture',l:'Excursions',s:'Monaco, Eze, Cannes...'},{v:'shopping',i:'shopping',l:'Shopping',s:'Boutiques, créateurs'},{v:'nightlife',i:'nightlife',l:'Soirées',s:'Bars, concerts'},{v:'sport',i:'sport',l:'Sport',s:'Parapente, canyoning'},{v:'bienetr',i:'bienetr',l:'Bien-être',s:'Spa, yoga, détente'}],counts:['Sélectionnez au moins un centre d\'intérêt','1 sélectionné','2 sélectionnés','3 sélectionnés','4 sélectionnés','5 ou plus sélectionnés'],catLabels:{culture:'Culture',gastro:'Gastronomie',nature:'Nature',plage:'Plage',shopping:'Shopping',nightlife:'Soirées',sport:'Sport',bienetr:'Bien-être',restaurant_midi:'Déjeuner',restaurant_midi_alt:'Déjeuner (alt.)',restaurant_soir:'Dîner',restaurant_soir_alt:'Dîner (alt.)',marche:'Marché',brunch:'Brunch',excursion:'Excursion'}},
+  q7:{step:'Étape 7 / 8',text:'Vos centres d\'intérêt ?',hint:'Sélectionnez tout ce qui vous inspire.',interests:[{v:'culture',i:'culture',l:'Culture',s:'Musées, monuments'},{v:'gastro',i:'gastro',l:'Gastronomie',s:'Restaurants, marchés'},{v:'nature',i:'nature',l:'Nature',s:'Parcs, balades'},{v:'plage',i:'plage',l:'Plage',s:'Mer & activités'},{v:'excursion',i:'culture',l:'Excursions',s:'Monaco, Eze, Cannes...'},{v:'shopping',i:'shopping',l:'Shopping',s:'Boutiques, créateurs'},{v:'nightlife',i:'nightlife',l:'Soirées',s:'Bars, concerts'},{v:'sport',i:'sport',l:'Sport',s:'Parapente, canyoning'},{v:'bienetr',i:'bienetr',l:'Bien-être',s:'Spa, yoga, détente'},{v:'art',i:'culture',l:'Art & Galeries',s:'Expositions, galeries'},{v:'artisanat',i:'shopping',l:'Artisanat',s:'Produits locaux, savoir-faire'},{v:'insolite',i:'nature',l:'Insolite',s:'Lieux cachés, expériences atypiques'}],counts:['Sélectionnez au moins un centre d\'intérêt','1 sélectionné','2 sélectionnés','3 sélectionnés','4 sélectionnés','5 ou plus sélectionnés'],catLabels:{culture:'Culture',gastro:'Gastronomie',nature:'Nature',plage:'Plage',shopping:'Shopping',nightlife:'Soirées',sport:'Sport',bienetr:'Bien-être',restaurant_midi:'Déjeuner',restaurant_midi_alt:'Déjeuner (alt.)',restaurant_soir:'Dîner',restaurant_soir_alt:'Dîner (alt.)',marche:'Marché',brunch:'Brunch',excursion:'Excursion',art:'Art & Galeries',artisanat:'Artisanat',insolite:'Insolite'}},
   q8:{step:'Étape 8 / 8',text:'Votre budget ?',hint:'Pour adapter les recommandations à vos attentes.',opts:[{v:'eco',i:'eco',l:'Économique',s:'Bon rapport qualité/prix'},{v:'moyen',i:'moyen',l:'Modéré',s:'Équilibré'},{v:'premium',i:'premium',l:'Premium',s:'Haut de gamme'}]},
   loading:{title:'Préparation de votre guide…',sub:'Analyse de vos préférences',steps:['Analyse de vos préférences','Sélection des meilleures adresses','Vérification des horaires','Organisation de l\'itinéraire','Finalisation du guide']},
   dayOnly:'Programme de la journée',dayLabel:'Jour',
@@ -1307,11 +1407,11 @@ fr:{
 en:{
   continue:'Continue →',generate:'Generate my guide →',
   q2:{step:'Step 2 / 8',text:'You are travelling…',hint:'This helps us tailor recommendations.',opts:[{v:'couple',i:'couple',l:'As a couple'},{v:'famille',i:'famille',l:'With family'},{v:'solo',i:'solo',l:'Solo'},{v:'amis',i:'amis',l:'With friends'}]},
-  q3:{step:'Step 3 / 8',text:'Length of your stay?',hint:'Number of nights in Nice.',dur:[{v:0,l:'Day trip'},{v:1,l:'1 night'},{v:2,l:'2 nights'},{v:3,l:'3 nights'},{v:5,l:'5 nights'},{v:7,l:'7 nights+'}]},
+  q3:{step:'Step 3 / 8',text:'Length of your stay?',hint:'Number of nights in Nice.',dur:[{v:0,l:'Day trip'},{v:1,l:'1 night'},{v:2,l:'2 nights'},{v:3,l:'3 nights'},{v:4,l:'4 nights'},{v:5,l:'5 nights'},{v:7,l:'7 nights+',custom:true}]},
   q4:{step:'Step 4 / 8',text:'Your travel dates?',hint:'To tailor the guide to the season and local events.',arrive:'Check-in',depart:'Check-out',arrHour:'Check-in time',depHour:'Check-out time'},
   q5:{step:'Step 5 / 8',text:'Your arrival and departure times?',hint:'We will only include activities accessible within your schedule.',arrHour:'Arrival time at hotel',depHour:'Departure time from hotel'},
   q6:{step:'Step 6 / 8',text:'When do you prefer to go out?',hint:'You can select multiple time slots.',hint2:'Unavailable days (optional)',moments:[{v:'matin',i:'matin',l:'Morning',s:'8am – 2pm'},{v:'apm',i:'full',l:'Afternoon',s:'2pm – 7pm'},{v:'soir',i:'soir',l:'Evening',s:'7pm – 11pm'},{v:'full',i:'full',l:'Full day',s:'All day long'}],jours:[{v:'0',l:'None'},{v:'1',l:'Mon'},{v:'2',l:'Tue'},{v:'3',l:'Wed'},{v:'4',l:'Thu'},{v:'5',l:'Fri'},{v:'6',l:'Sat'},{v:'7',l:'Sun'}]},
-  q7:{step:'Step 7 / 8',text:'Your interests?',hint:'Select everything that inspires you.',interests:[{v:'culture',i:'culture',l:'Culture',s:'Museums, monuments'},{v:'gastro',i:'gastro',l:'Gastronomy',s:'Restaurants, markets'},{v:'nature',i:'nature',l:'Nature',s:'Parks, walks'},{v:'plage',i:'plage',l:'Beach',s:'Sea & activities'},{v:'excursion',i:'culture',l:'Day trips',s:'Monaco, Eze, Cannes...'},{v:'shopping',i:'shopping',l:'Shopping',s:'Boutiques, designers'},{v:'nightlife',i:'nightlife',l:'Nightlife',s:'Bars, concerts'},{v:'sport',i:'sport',l:'Sport',s:'Paragliding, canyoning'},{v:'bienetr',i:'bienetr',l:'Wellness',s:'Spa, yoga, relaxation'}],counts:['Select at least one interest','1 selected','2 selected','3 selected','4 selected','5+ selected'],catLabels:{culture:'Culture',gastro:'Gastronomy',nature:'Nature',plage:'Beach',shopping:'Shopping',nightlife:'Nightlife',sport:'Sport',bienetr:'Wellness',restaurant_midi:'Lunch',restaurant_midi_alt:'Lunch (alt.)',restaurant_soir:'Dinner',restaurant_soir_alt:'Dinner (alt.)',marche:'Market',brunch:'Brunch',excursion:'Day trip'}},
+  q7:{step:'Step 7 / 8',text:'Your interests?',hint:'Select everything that inspires you.',interests:[{v:'culture',i:'culture',l:'Culture',s:'Museums, monuments'},{v:'gastro',i:'gastro',l:'Gastronomy',s:'Restaurants, markets'},{v:'nature',i:'nature',l:'Nature',s:'Parks, walks'},{v:'plage',i:'plage',l:'Beach',s:'Sea & activities'},{v:'excursion',i:'culture',l:'Day trips',s:'Monaco, Eze, Cannes...'},{v:'shopping',i:'shopping',l:'Shopping',s:'Boutiques, designers'},{v:'nightlife',i:'nightlife',l:'Nightlife',s:'Bars, concerts'},{v:'sport',i:'sport',l:'Sport',s:'Paragliding, canyoning'},{v:'bienetr',i:'bienetr',l:'Wellness',s:'Spa, yoga, relaxation'},{v:'art',i:'culture',l:'Art & Galleries',s:'Exhibitions, galleries'},{v:'artisanat',i:'shopping',l:'Crafts',s:'Local products, know-how'},{v:'insolite',i:'nature',l:'Off the beaten path',s:'Hidden spots, unusual experiences'}],counts:['Select at least one interest','1 selected','2 selected','3 selected','4 selected','5+ selected'],catLabels:{culture:'Culture',gastro:'Gastronomy',nature:'Nature',plage:'Beach',shopping:'Shopping',nightlife:'Nightlife',sport:'Sport',bienetr:'Wellness',restaurant_midi:'Lunch',restaurant_midi_alt:'Lunch (alt.)',restaurant_soir:'Dinner',restaurant_soir_alt:'Dinner (alt.)',marche:'Market',brunch:'Brunch',excursion:'Day trip',art:'Art & Galleries',artisanat:'Crafts',insolite:'Off the beaten path'}},
   q8:{step:'Step 8 / 8',text:'Your budget?',hint:'To match recommendations to your expectations.',opts:[{v:'eco',i:'eco',l:'Budget',s:'Best value'},{v:'moyen',i:'moyen',l:'Moderate',s:'Balanced'},{v:'premium',i:'premium',l:'Premium',s:'High-end'}]},
   loading:{title:'Preparing your guide…',sub:'Analysing your preferences',steps:['Analysing your preferences','Selecting the best spots','Checking schedules','Organising the itinerary','Finalising your guide']},
   dayOnly:'Day programme',dayLabel:'Day',
@@ -1322,11 +1422,11 @@ en:{
 es:{
   continue:'Continuar →',generate:'Generar mi guía →',
   q2:{step:'Paso 2 / 8',text:'Viaja…',hint:'Esto nos ayuda a personalizar las recomendaciones.',opts:[{v:'couple',i:'couple',l:'En pareja'},{v:'famille',i:'famille',l:'Con familia'},{v:'solo',i:'solo',l:'Solo'},{v:'amis',i:'amis',l:'Con amigos'}]},
-  q3:{step:'Paso 3 / 8',text:'¿Duración de su estancia?',hint:'Número de noches en Niza.',dur:[{v:0,l:'Un día'},{v:1,l:'1 noche'},{v:2,l:'2 noches'},{v:3,l:'3 noches'},{v:5,l:'5 noches'},{v:7,l:'7 noches+'}]},
+  q3:{step:'Paso 3 / 8',text:'¿Duración de su estancia?',hint:'Número de noches en Niza.',dur:[{v:0,l:'Un día'},{v:1,l:'1 noche'},{v:2,l:'2 noches'},{v:3,l:'3 noches'},{v:4,l:'4 noches'},{v:5,l:'5 noches'},{v:7,l:'7 noches+',custom:true}]},
   q4:{step:'Paso 4 / 8',text:'¿Sus fechas de estancia?',hint:'Para adaptar la guía a la temporada y los eventos locales.',arrive:'Llegada',depart:'Salida',arrHour:'Hora de llegada',depHour:'Hora de salida'},
   q5:{step:'Paso 5 / 8',text:'¿Sus horarios de llegada y salida?',hint:'Solo incluiremos actividades accesibles según sus horarios.',arrHour:'Hora de llegada al hotel',depHour:'Hora de salida del hotel'},
   q6:{step:'Paso 6 / 8',text:'¿Cuándo prefiere salir?',hint:'Puede seleccionar varios horarios.',hint2:'Días no disponibles (opcional)',moments:[{v:'matin',i:'matin',l:'Mañana',s:'8h – 14h'},{v:'apm',i:'full',l:'Tarde',s:'14h – 19h'},{v:'soir',i:'soir',l:'Noche',s:'19h – 23h'},{v:'full',i:'full',l:'Día completo',s:'Todo el día'}],jours:[{v:'0',l:'Ninguno'},{v:'1',l:'Lun'},{v:'2',l:'Mar'},{v:'3',l:'Mié'},{v:'4',l:'Jue'},{v:'5',l:'Vie'},{v:'6',l:'Sáb'},{v:'7',l:'Dom'}]},
-  q7:{step:'Paso 7 / 8',text:'¿Sus intereses?',hint:'Seleccione todo lo que le inspire.',interests:[{v:'culture',i:'culture',l:'Cultura',s:'Museos, monumentos'},{v:'gastro',i:'gastro',l:'Gastronomía',s:'Restaurantes, mercados'},{v:'nature',i:'nature',l:'Naturaleza',s:'Parques, paseos'},{v:'plage',i:'plage',l:'Playa',s:'Mar y actividades'},{v:'excursion',i:'culture',l:'Excursiones',s:'Mónaco, Eze, Cannes...'},{v:'shopping',i:'shopping',l:'Compras',s:'Tiendas, diseñadores'},{v:'nightlife',i:'nightlife',l:'Vida nocturna',s:'Bares, conciertos'},{v:'sport',i:'sport',l:'Deporte',s:'Parapente, barranquismo'},{v:'bienetr',i:'bienetr',l:'Bienestar',s:'Spa, yoga, relajación'}],counts:['Seleccione al menos un interés','1 seleccionado','2 seleccionados','3 seleccionados','4 seleccionados','5+ seleccionados'],catLabels:{culture:'Cultura',gastro:'Gastronomía',nature:'Naturaleza',plage:'Playa',shopping:'Compras',nightlife:'Vida nocturna',sport:'Deporte',bienetr:'Bienestar',restaurant_midi:'Almuerzo',restaurant_midi_alt:'Almuerzo (alt.)',restaurant_soir:'Cena',restaurant_soir_alt:'Cena (alt.)',marche:'Mercado',brunch:'Brunch',excursion:'Excursión'}},
+  q7:{step:'Paso 7 / 8',text:'¿Sus intereses?',hint:'Seleccione todo lo que le inspire.',interests:[{v:'culture',i:'culture',l:'Cultura',s:'Museos, monumentos'},{v:'gastro',i:'gastro',l:'Gastronomía',s:'Restaurantes, mercados'},{v:'nature',i:'nature',l:'Naturaleza',s:'Parques, paseos'},{v:'plage',i:'plage',l:'Playa',s:'Mar y actividades'},{v:'excursion',i:'culture',l:'Excursiones',s:'Mónaco, Eze, Cannes...'},{v:'shopping',i:'shopping',l:'Compras',s:'Tiendas, diseñadores'},{v:'nightlife',i:'nightlife',l:'Vida nocturna',s:'Bares, conciertos'},{v:'sport',i:'sport',l:'Deporte',s:'Parapente, barranquismo'},{v:'bienetr',i:'bienetr',l:'Bienestar',s:'Spa, yoga, relajación'},{v:'art',i:'culture',l:'Arte & Galerías',s:'Exposiciones, galerías'},{v:'artisanat',i:'shopping',l:'Artesanía',s:'Productos locales, saber-hacer'},{v:'insolite',i:'nature',l:'Insólito',s:'Lugares ocultos, experiencias atípicas'}],counts:['Seleccione al menos un interés','1 seleccionado','2 seleccionados','3 seleccionados','4 seleccionados','5+ seleccionados'],catLabels:{culture:'Cultura',gastro:'Gastronomía',nature:'Naturaleza',plage:'Playa',shopping:'Compras',nightlife:'Vida nocturna',sport:'Deporte',bienetr:'Bienestar',restaurant_midi:'Almuerzo',restaurant_midi_alt:'Almuerzo (alt.)',restaurant_soir:'Cena',restaurant_soir_alt:'Cena (alt.)',marche:'Mercado',brunch:'Brunch',excursion:'Excursión',art:'Arte & Galerías',artisanat:'Artesanía',insolite:'Insólito'}},
   q8:{step:'Paso 8 / 8',text:'¿Su presupuesto?',hint:'Para adaptar las recomendaciones a sus expectativas.',opts:[{v:'eco',i:'eco',l:'Económico',s:'Mejor relación calidad/precio'},{v:'moyen',i:'moyen',l:'Moderado',s:'Equilibrado'},{v:'premium',i:'premium',l:'Premium',s:'Alto nivel'}]},
   loading:{title:'Preparando su guía…',sub:'Analizando sus preferencias',steps:['Analizando sus preferencias','Seleccionando los mejores lugares','Verificando los horarios','Organizando el itinerario','Finalizando su guía']},
   dayOnly:'Programa del día',dayLabel:'Día',
@@ -1379,8 +1479,56 @@ function dSelLang(l){DA.lang=l;['fr','en','es'].forEach(x=>document.getElementBy
 
 function dRenderQ2(){const q=DT[DA.lang].q2,L=DA.lang;document.getElementById('dqs2').textContent=q.step;document.getElementById('dqt2').textContent=q.text;document.getElementById('dqh2').textContent=q.hint;document.getElementById('dbtn2').textContent=DT[L].continue;document.getElementById('dbtn2').disabled=!DA.profile;document.getElementById('dqo2').innerHTML=q.opts.map(o=>`<div class="opt${DA.profile===o.v?' sel':''}" id="dp-${o.v}" onclick="dSelSingle('profile','${o.v}','dp-','dbtn2')"><div class="chk">✓</div><div class="opt-icon">${ICONS[o.i]||''}</div><div class="opt-label">${o.l}</div></div>`).join('');}
 
-function dRenderQ3(){const q=DT[DA.lang].q3,L=DA.lang;document.getElementById('dqs3').textContent=q.step;document.getElementById('dqt3').textContent=q.text;document.getElementById('dqh3').textContent=q.hint;document.getElementById('dbtn3').textContent=DT[L].continue;document.getElementById('dbtn3').disabled=DA.duration===null;document.getElementById('ddur-grid').innerHTML=q.dur.map(d=>`<div class="dur-btn${DA.duration===d.v?' sel':''}" id="dd-${d.v}" onclick="dSelDur(${d.v})"><div class="dur-num">${d.v===0?'1':d.v===7?'7+':d.v}</div><div class="dur-label">${d.l}</div></div>`).join('');}
-function dSelDur(v){DA.duration=v;document.querySelectorAll('[id^="dd-"]').forEach(e=>e.classList.remove('sel'));document.getElementById('dd-'+v).classList.add('sel');document.getElementById('dbtn3').disabled=false;}
+function dRenderQ3(){
+  const q=DT[DA.lang].q3,L=DA.lang;
+  document.getElementById('dqs3').textContent=q.step;
+  document.getElementById('dqt3').textContent=q.text;
+  document.getElementById('dqh3').textContent=q.hint;
+  document.getElementById('dbtn3').textContent=DT[L].continue;
+  document.getElementById('dbtn3').disabled=DA.duration===null;
+  const isCustom=DA.duration!==null&&DA.duration>=7;
+  document.getElementById('ddur-grid').innerHTML=q.dur.map(d=>`<div class="dur-btn${(d.v===7&&isCustom)||DA.duration===d.v?' sel':''}" id="dd-${d.v}" onclick="dSelDur(${d.v})"><div class="dur-num">${d.v===0?'1':d.v===7?'7+':d.v}</div><div class="dur-label">${d.l}</div></div>`).join('');
+  // Supprimer l'ancien champ custom s'il existe
+  const old=document.getElementById('dur-custom');if(old)old.remove();
+  if(isCustom){
+    const customDiv=document.createElement('div');
+    customDiv.id='dur-custom';
+    customDiv.style='margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap';
+    const lbl=L==='fr'?'Nombre de nuits exact :':L==='en'?'Exact number of nights:':'Número exacto de noches:';
+    customDiv.innerHTML=`<label style="font-size:13px;color:var(--mid)">${lbl}</label><input type="number" id="dur-custom-val" min="7" max="30" value="${DA.duration}" style="width:70px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--dark);background:var(--off);outline:none" oninput="dSetCustomDur(this.value)">`;
+    document.getElementById('ddur-grid').after(customDiv);
+  }
+}
+function dSelDur(v){
+  if(v===7){
+    // Afficher champ de saisie personnalisé
+    document.querySelectorAll('[id^="dd-"]').forEach(e=>e.classList.remove('sel'));
+    document.getElementById('dd-7').classList.add('sel');
+    let customDiv=document.getElementById('dur-custom');
+    if(!customDiv){
+      customDiv=document.createElement('div');
+      customDiv.id='dur-custom';
+      customDiv.style='margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap';
+      customDiv.innerHTML='<label style="font-size:13px;color:var(--mid)">Nombre de nuits exact :</label><input type="number" id="dur-custom-val" min="7" max="30" value="7" style="width:70px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-family:sans-serif;font-size:14px;color:var(--dark);background:var(--off);outline:none" oninput="dSetCustomDur(this.value)">';
+
+      document.getElementById('ddur-grid').after(customDiv);
+    }
+    customDiv.style.display='flex';
+    DA.duration=7;
+    document.getElementById('dbtn3').disabled=false;
+  } else {
+    DA.duration=v;
+    document.querySelectorAll('[id^="dd-"]').forEach(e=>e.classList.remove('sel'));
+    document.getElementById('dd-'+v).classList.add('sel');
+    const customDiv=document.getElementById('dur-custom');
+    if(customDiv)customDiv.style.display='none';
+    document.getElementById('dbtn3').disabled=false;
+  }
+}
+function dSetCustomDur(val){
+  const n=parseInt(val);
+  if(n>=7&&n<=30)DA.duration=n;
+}
 
 function dRenderQ4(){
   const q=DT[DA.lang].q4,L=DA.lang;
@@ -1515,6 +1663,8 @@ function dBuildGuide(){
         return noOverlap(adapted,schedule);
       });
       if(pool.length>0){
+        // Max 1 excursion par jour (journée complète)
+        if(cat==='excursion'&&schedule.some(s=>s.zone==='excursion'))continue;
         const pick=pool[Math.floor(Math.random()*Math.min(pool.length,3))];
         usedG.push(pick.name);
         return {...adaptStart(pick,dayStart),cat};
@@ -1535,6 +1685,8 @@ function dBuildGuide(){
         return noOverlap(adapted,schedule);
       });
       if(pool.length>0){
+        // Max 1 excursion par jour (journée complète)
+        if(cat==='excursion'&&schedule.some(s=>s.zone==='excursion'))continue;
         const pick=pool[Math.floor(Math.random()*Math.min(pool.length,3))];
         usedG.push(pick.name);
         return {...adaptStart(pick,dayStart),cat};
@@ -1571,7 +1723,7 @@ function dBuildGuide(){
         if(pool.length>0){const pick=pool[(day-1)%pool.length];const a=adaptStart(pick,dayStart);schedule.push({...a,cat:'marche'});usedGlobal.push(pick.name);}
       }
       // Activité matin
-      const matinCats=interests.filter(v=>['culture','nature','plage','sport','bienetr','shopping','excursion'].includes(v));
+      const matinCats=interests.filter(v=>['culture','nature','plage','sport','bienetr','shopping','excursion','art','artisanat','insolite'].includes(v));
       const act=pickActivity(matinCats,'matin',schedule,dayStart,dayEnd,isFirstDay,isLastDay,usedGlobal);
       if(act)schedule.push(act);
     }
@@ -1593,7 +1745,7 @@ function dBuildGuide(){
 
     // ─ APRÈS-MIDI ─────────────────────────────────────────────────────
     if(slotActive('apm',dayStart,dayEnd)){
-      const apmCats=interests.filter(v=>['culture','nature','plage','shopping','sport','bienetr','excursion'].includes(v));
+      const apmCats=interests.filter(v=>['culture','nature','plage','shopping','sport','bienetr','excursion','art','artisanat','insolite'].includes(v));
       // 1ère activité apm
       const act1=pickActivity(apmCats,'apm',schedule,dayStart,dayEnd,isFirstDay,isLastDay,usedGlobal);
       if(act1)schedule.push(act1);
@@ -1722,6 +1874,10 @@ async function dDlPDF(){
   const depMin=DA.departureHour?strToMin(DA.departureHour):1320;
   let arrDate=DA.dateIn?new Date(DA.dateIn):new Date();
   const interests=DA.interests.length>0?DA.interests:['culture','gastro'];
+  const mobility=DA.mobility||'transport';
+  // Liens croisés : artisanat+séjour>1j → Biot comme excursion prioritaire
+  // excursion → max 1 par jour (journée entière)
+  // famille → Parc Phoenix et activités adaptées enfants en priorité
   const days=dur===0?1:Math.min(dur,5);
   const slotRanges={matin:{s:480,e:840},apm:{s:840,e:1140},soir:{s:1140,e:1440}};
 
