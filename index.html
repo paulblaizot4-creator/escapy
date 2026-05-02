@@ -702,6 +702,672 @@ function toggleFaq(btn){const item=btn.parentElement;const wasOpen=item.classLis
 function toggleAcc(btn){const item=btn.parentElement;const wasOpen=item.classList.contains('open');item.closest('.acc-list').querySelectorAll('.acc-item').forEach(i=>i.classList.remove('open'));if(!wasOpen)item.classList.add('open');}
 function toggleFeat(row){const wasOpen=row.classList.contains('open');document.querySelectorAll('.feat-row').forEach(r=>r.classList.remove('open'));if(!wasOpen)row.classList.add('open');}
 /* ── GÉNÉRATION PDF ──────────────────────────────────────────────────── */
+const DA={lang:'fr',profile:null,duration:null,dateIn:null,dateOut:null,arrivalHour:null,departureHour:null,moments:[],unavail:[],interests:[],budget:null};
+
+/* ── DONNÉES LIEUX ─────────────────────────────────────────────────────────
+   Structure : start/end en minutes depuis minuit pour anti-chevauchement
+   travel : texte pur, sans emoji
+   cat : 'activity' | 'restaurant_midi' | 'restaurant_soir' | 'brunch' | 'marche'
+────────────────────────────────────────────────────────────────────────── */
+const PLACES={
+
+culture:[
+  {name:'Musée Matisse',start:600,end:780,slot:'matin',
+   desc:{fr:'Villa romaine du 17e siècle abritant la remarquable collection permanente Matisse.',en:'17th-century Roman villa housing the permanent Matisse collection.',es:'Villa romana del siglo XVII con la colección permanente Matisse.'},
+   rating:'4.7',travel:{fr:'Bus 15 — 20 min depuis Place Masséna',en:'Bus 15 — 20 min from Place Masséna',es:'Bus 15 — 20 min desde Place Masséna'},
+   link:'https://www.musee-matisse-nice.org/',ll:{fr:'Voir le site',en:'Visit website',es:'Ver sitio web'},
+   review:{fr:'"Collection exceptionnelle dans un cadre magnifique."',en:'"Exceptional collection in a magnificent setting."',es:'"Colección excepcional en un entorno magnífico."'},budget:['eco','moyen','premium']},
+  {name:'Vieux-Nice',start:540,end:720,slot:'matin',
+   desc:{fr:'Le cœur historique de Nice : ruelles colorées, architecture baroque italienne et marché provençal.',en:'The historic heart of Nice: colorful alleys, Italian baroque architecture and Provençal market.',es:'El corazón histórico de Niza: callejones coloridos y mercado provenzal.'},
+   rating:'4.8',travel:{fr:'Tramway T1 — 10 min depuis Place Masséna',en:'Tram T1 — 10 min from Place Masséna',es:'Tranvía T1 — 10 min desde Place Masséna'},
+   link:'https://www.nicetourisme.com/vieux-nice',ll:{fr:'Voir la carte',en:'View map',es:'Ver mapa'},
+   review:{fr:'"Incontournable. Ne manquez pas le Cours Saleya le matin."',en:'"A must-see. Don\'t miss Cours Saleya in the morning."',es:'"Imprescindible. No te pierdas el Cours Saleya por la mañana."'},budget:['eco','moyen','premium']},
+  {name:'Musée des Beaux-Arts Jules Chéret',start:600,end:720,slot:'matin',
+   desc:{fr:'Magnifique villa Belle Époque abritant Monet, Rodin, Van Dongen, Dufy. Entrée gratuite. Jardins luxuriants.',en:'Magnificent Belle Époque villa with Monet, Rodin, Van Dongen, Dufy. Free entry. Lush gardens.',es:'Colección de arte moderno y contemporáneo de renombre internacional.'},
+   rating:'4.5',travel:{fr:'Tramway T1 — 12 min depuis Place Masséna',en:'Tram T1 — 12 min from Place Masséna',es:'Tranvía T1 — 12 min desde Place Masséna'},
+   link:'https://www.musee-beaux-arts-nice.org/',ll:{fr:'Voir le site',en:'Visit website',es:'Ver sitio web'},
+   review:{fr:'"Un joyau méconnu. La villa et ses jardins valent absolument le déplacement."',en:'"Remarkable architecture and stimulating collections."',es:'"Arquitectura notable y colecciones estimulantes."'},budget:['eco','moyen','premium']},
+  {name:'Cimiez & Monastère',start:840,end:1020,slot:'apm',
+   desc:{fr:'Quartier résidentiel paisible abritant un monastère franciscain et ses jardins en terrasses plantés de rosiers.',en:'Peaceful residential area with a Franciscan monastery and terraced rose gardens.',es:'Barrio residencial tranquilo con monasterio franciscano y jardines en terrazas.'},
+   rating:'4.6',travel:{fr:'Bus 15 — 25 min depuis Place Masséna',en:'Bus 15 — 25 min from Place Masséna',es:'Bus 15 — 25 min desde Place Masséna'},
+   link:'https://www.nicetourisme.com/',ll:{fr:'Voir la carte',en:'View map',es:'Ver mapa'},
+   review:{fr:'"Havres de paix, loin de l\'agitation touristique."',en:'"An oasis of calm away from tourist crowds."',es:'"Un oasis de paz lejos del bullicio turístico."'},budget:['eco','moyen','premium']}
+],
+
+nature:[
+  {name:'Colline du Château',start:480,end:660,slot:'matin',
+   desc:{fr:'Vue panoramique imprenable sur la Baie des Anges et les toits de Nice. Accessible à pied ou par ascenseur gratuit.',en:'Stunning panoramic view over the Bay of Angels and Nice\'s rooftops. Free elevator available.',es:'Vista panorámica sobre la Bahía de los Ángeles. Ascensor gratuito disponible.'},
+   rating:'4.7',travel:{fr:'A pied — 20 min depuis Place Masséna, ascenseur gratuit',en:'On foot — 20 min from Place Masséna, free elevator',es:'A pie — 20 min desde Place Masséna, ascensor gratuito'},
+   link:'https://www.nicetourisme.com/',ll:{fr:'Voir la carte',en:'View map',es:'Ver mapa'},
+   review:{fr:'"Vue époustouflante. Prévoyez au minimum 1 heure."',en:'"Breathtaking view. Allow at least 1 hour."',es:'"Vista impresionante. Prever al menos 1 hora."'},budget:['eco','moyen','premium']},
+  {name:'Promenade du Paillon',start:780,end:900,slot:'apm',
+   desc:{fr:'Coulée verte de 12 hectares en plein centre-ville : fontaines, jets d\'eau, aires de jeux et pelouses.',en:'12-hectare green corridor in the city centre: fountains, water jets, playgrounds and lawns.',es:'Corredor verde de 12 hectáreas en el centro de la ciudad.'},
+   rating:'4.5',travel:{fr:'A pied — 5 min depuis Place Masséna',en:'On foot — 5 min from Place Masséna',es:'A pie — 5 min desde Place Masséna'},
+   link:'https://www.nicetourisme.com/',ll:{fr:'Voir la carte',en:'View map',es:'Ver mapa'},
+   review:{fr:'"Parfait pour une pause en famille ou un footing."',en:'"Perfect for a family break or a jog."',es:'"Perfecto para un descanso en familia o correr."'},budget:['eco','moyen','premium']},
+  {name:'Corniche Inférieure',start:840,end:1080,slot:'apm',
+   desc:{fr:'La route la plus spectaculaire de la Côte d\'Azur longeant la mer entre Nice et Menton : criques, villages et panoramas.',en:'The most spectacular road on the Côte d\'Azur between Nice and Menton: coves, villages and panoramas.',es:'La ruta más espectacular de la Costa Azul entre Niza y Menton.'},
+   rating:'4.8',travel:{fr:'Bus 100 — départ Place Masséna',en:'Bus 100 — departs Place Masséna',es:'Bus 100 — sale de Place Masséna'},
+   link:'https://www.nicetourisme.com/',ll:{fr:'Voir la carte',en:'View map',es:'Ver mapa'},
+   review:{fr:'"Un itinéraire inoubliable entre mer et falaises."',en:'"An unforgettable route between sea and cliffs."',es:'"Un itinerario inolvidable entre el mar y los acantilados."'},budget:['eco','moyen','premium']}
+],
+
+plage:[
+  {name:'Plage Castel',start:540,end:780,slot:'matin',
+   desc:{fr:'La plus belle plage publique de Nice, au pied de la Colline du Château. Eau cristalline et atmosphère préservée.',en:'The most beautiful public beach in Nice, at the foot of Castle Hill. Crystal clear water.',es:'La más bella playa pública de Niza, al pie de la Colina del Castillo.'},
+   rating:'4.6',travel:{fr:'A pied — 25 min depuis Place Masséna',en:'On foot — 25 min from Place Masséna',es:'A pie — 25 min desde Place Masséna'},
+   link:'https://www.nicetourisme.com/plages',ll:{fr:'Voir la carte',en:'View map',es:'Ver mapa'},
+   review:{fr:'"L\'eau est incroyablement claire, même en plein été."',en:'"Incredibly clear water, even in midsummer."',es:'"Agua increíblemente clara, incluso en pleno verano."'},budget:['eco','moyen','premium']},
+  {name:'Hi Beach (plage privée)',start:600,end:780,slot:'matin',
+   desc:{fr:'Plage privée éco-design primée. Transats et parasols inclus, bar de qualité et restauration légère sur place.',en:'Award-winning eco-design private beach. Sun loungers included, quality bar and light meals on site.',es:'Playa privada eco-design galardonada. Tumbonas incluidas, bar de calidad.'},
+   rating:'4.5',travel:{fr:'Bus 9 — 15 min depuis Place Masséna',en:'Bus 9 — 15 min from Place Masséna',es:'Bus 9 — 15 min desde Place Masséna'},
+   link:'https://www.hi-beach.net/',ll:{fr:'Réserver',en:'Book',es:'Reservar'},
+   review:{fr:'"Meilleur rapport qualité-prix des plages privées de Nice."',en:'"Best value private beach in Nice."',es:'"Mejor relación calidad-precio de las playas privadas de Niza."'},budget:['moyen','premium']},
+  {name:'Plage de la Réserve',start:840,end:1080,slot:'apm',
+   desc:{fr:'Plage naturelle préservée à l\'est de Nice, eaux transparentes et rochers typiques de la Méditerranée.',en:'Preserved natural beach east of Nice, with transparent waters and typical Mediterranean rocks.',es:'Playa natural preservada al este de Niza, aguas transparentes.'},
+   rating:'4.4',travel:{fr:'Bus 9 — 20 min depuis Place Masséna',en:'Bus 9 — 20 min from Place Masséna',es:'Bus 9 — 20 min desde Place Masséna'},
+   link:'https://www.nicetourisme.com/plages',ll:{fr:'Voir la carte',en:'View map',es:'Ver mapa'},
+   review:{fr:'"Moins fréquentée que les plages du centre, très agréable."',en:'"Less crowded than central beaches, very pleasant."',es:'"Menos concurrida que las playas del centro, muy agradable."'},budget:['eco','moyen','premium']}
+],
+
+shopping:[
+  {name:'Cours Saleya — Boutiques',start:600,end:780,slot:'matin',
+   desc:{fr:'Autour du célèbre marché, une multitude de boutiques de créateurs locaux, de spécialités niçoises et de savons de Provence.',en:'Around the famous market, many local designers, Nice specialities and Provence soaps.',es:'Alrededor del famoso mercado, boutiques de diseñadores locales y especialidades de Niza.'},
+   rating:'4.6',travel:{fr:'Tramway T1 — 12 min depuis Place Masséna',en:'Tram T1 — 12 min from Place Masséna',es:'Tranvía T1 — 12 min desde Place Masséna'},
+   link:'https://www.nicetourisme.com/',ll:{fr:'Voir la carte',en:'View map',es:'Ver mapa'},
+   review:{fr:'"Les savons et confitures locales sont parfaits comme souvenirs."',en:'"Local soaps and jams are perfect souvenirs."',es:'"Los jabones y mermeladas locales son perfectos como souvenirs."'},budget:['eco','moyen','premium']},
+  {name:'Rue Masséna — Shopping',start:840,end:1080,slot:'apm',
+   desc:{fr:'La principale rue commerçante piétonne de Nice : grandes enseignes, boutiques de mode et terrasses animées.',en:'Nice\'s main pedestrian shopping street: major brands, fashion boutiques and lively terraces.',es:'La principal calle comercial peatonal de Niza: grandes marcas y boutiques de moda.'},
+   rating:'4.2',travel:{fr:'A pied — 3 min depuis Place Masséna',en:'On foot — 3 min from Place Masséna',es:'A pie — 3 min desde Place Masséna'},
+   link:'https://www.nicetourisme.com/',ll:{fr:'Voir la carte',en:'View map',es:'Ver mapa'},
+   review:{fr:'"Idéal pour un après-midi shopping complet."',en:'"Ideal for a full afternoon of shopping."',es:'"Ideal para una tarde completa de compras."'},budget:['eco','moyen','premium']}
+],
+
+sport:[
+  {name:'Lime & Pony — Vélos Promenade',start:420,end:600,slot:'matin',
+   desc:{fr:'Location de vélos en libre-service : 8 km de piste cyclable longeant la mer sur la mythique Promenade des Anglais.',en:'Bike-sharing: 8 km of cycle path along the sea on the legendary Promenade des Anglais.',es:'Alquiler de bicicletas: 8 km de carril bici a lo largo del mar en la Promenade des Anglais.'},
+   rating:'4.3',travel:{fr:'Bornes disponibles Place Masséna et Promenade',en:'Stations at Place Masséna and Promenade',es:'Estaciones en Place Masséna y Promenade'},
+   link:'https://www.li.me/fr-fr/locations/nice',ll:{fr:'Trouver une borne',en:'Find a station',es:'Buscar estación'},
+   review:{fr:'"Parfait pour longer la mer tôt le matin, avant l\'affluence."',en:'"Perfect for cycling by the sea early in the morning."',es:'"Perfecto para ir junto al mar temprano en la mañana."'},budget:['eco','moyen','premium']},
+  {name:'Randonnée Tête de Chien',start:540,end:840,slot:'matin',
+   desc:{fr:'Randonnée à couper le souffle surplombant Monaco et la Côte d\'Azur. Niveau intermédiaire, 3h aller-retour.',en:'Breathtaking hike overlooking Monaco and the Côte d\'Azur. Intermediate level, 3h return.',es:'Senderismo con vistas impresionantes sobre Mónaco y la Costa Azul. Nivel intermedio, 3h ida y vuelta.'},
+   rating:'4.7',travel:{fr:'Bus 112 — 35 min depuis Place Masséna',en:'Bus 112 — 35 min from Place Masséna',es:'Bus 112 — 35 min desde Place Masséna'},
+   link:'https://www.visorando.com/',ll:{fr:'Voir le tracé',en:'View route',es:'Ver ruta'},
+   review:{fr:'"Vue à 360° sur Monaco, Menton et la mer. Inoubliable."',en:'"360° view over Monaco, Menton and the sea. Unforgettable."',es:'"Vista de 360° sobre Mónaco, Menton y el mar. Inolvidable."'},budget:['eco','moyen','premium']}
+],
+
+nightlife:[
+  {name:'Bar du Négresco',start:1080,end:1500,slot:'soir',
+   desc:{fr:'Prendre un verre dans le salon de l\'hôtel le plus emblématique de la Côte d\'Azur. Décor Belle Époque et service irréprochable.',en:'A drink in the lounge of the most emblematic hotel on the Côte d\'Azur. Belle Époque decor.',es:'Una copa en el salón del hotel más emblemático de la Costa Azul. Decoración Belle Époque.'},
+   rating:'4.8',travel:{fr:'A pied — 10 min depuis Place Masséna',en:'On foot — 10 min from Place Masséna',es:'A pie — 10 min desde Place Masséna'},
+   link:'https://www.negresco-nice.com/',ll:{fr:'Voir le site',en:'Visit website',es:'Ver sitio web'},
+   review:{fr:'"Un endroit hors du temps. La quintessence de la Côte d\'Azur."',en:'"A place outside of time. The quintessence of the Côte d\'Azur."',es:'"Un lugar fuera del tiempo. La quintaesencia de la Costa Azul."'},budget:['premium']},
+  {name:'Wayne\'s Bar',start:1200,end:1560,slot:'soir',
+   desc:{fr:'Le bar le plus animé du Vieux-Nice avec concerts live de rock et blues chaque soir. Ambiance garantie.',en:'The liveliest bar in Old Nice with live rock and blues concerts every evening.',es:'El bar más animado del Viejo Niza con conciertos de rock y blues en vivo cada noche.'},
+   rating:'4.4',travel:{fr:'Tramway T1 — 12 min depuis Place Masséna',en:'Tram T1 — 12 min from Place Masséna',es:'Tranvía T1 — 12 min desde Place Masséna'},
+   link:'https://www.waynes.fr/',ll:{fr:'Voir le programme',en:'View schedule',es:'Ver programa'},
+   review:{fr:'"Musique live de qualité chaque soir. Convivial et festif."',en:'"Quality live music every night. Convivial and festive."',es:'"Música en vivo de calidad cada noche. Ambiente festivo."'},budget:['eco','moyen','premium']},
+  {name:'Le Comptoir du Marché',start:1080,end:1380,slot:'soir',
+   desc:{fr:'Bar à vins chaleureux en plein Vieux-Nice. Sélection de vins naturels et planches de charcuterie niçoise.',en:'Warm wine bar in the heart of Old Nice. Natural wines and Nice charcuterie boards.',es:'Bar de vinos acogedor en el Viejo Niza. Vinos naturales y tablas de charcutería nizarda.'},
+   rating:'4.5',travel:{fr:'Tramway T1 — 12 min depuis Place Masséna',en:'Tram T1 — 12 min from Place Masséna',es:'Tranvía T1 — 12 min desde Place Masséna'},
+   link:'https://www.nicetourisme.com/',ll:{fr:'Voir la carte',en:'View map',es:'Ver mapa'},
+   review:{fr:'"Excellent rapport qualité-prix, patron passionné."',en:'"Excellent value, passionate owner."',es:'"Excelente relación calidad-precio, propietario apasionado."'},budget:['eco','moyen']}
+],
+
+bienetr:[
+  {name:'Spa Nuxe Nice',start:540,end:720,slot:'matin',
+   desc:{fr:'Soin signature Nuxe dans une cave voûtée du 16e siècle en plein Vieux-Nice. Moment de détente absolue.',en:'Signature Nuxe treatment in a 16th-century vaulted cellar in Old Nice.',es:'Tratamiento Nuxe en una bodega abovedada del siglo XVI en el Viejo Niza.'},
+   rating:'4.8',travel:{fr:'Tramway T1 — 12 min depuis Place Masséna',en:'Tram T1 — 12 min from Place Masséna',es:'Tranvía T1 — 12 min desde Place Masséna'},
+   link:'https://www.nuxe.com/spas',ll:{fr:'Réserver',en:'Book',es:'Reservar'},
+   review:{fr:'"Le meilleur spa de Nice. Personnel attentionné."',en:'"The best spa in Nice. Attentive staff."',es:'"El mejor spa de Niza. Personal atento."'},budget:['moyen','premium']},
+  {name:'Yoga sur la Promenade',start:420,end:540,slot:'matin',
+   desc:{fr:'Cours de yoga en plein air face à la mer sur la Promenade des Anglais, organisés chaque matin en saison.',en:'Outdoor yoga classes facing the sea on the Promenade des Anglais, organized every morning in season.',es:'Clases de yoga al aire libre frente al mar en la Promenade des Anglais.'},
+   rating:'4.6',travel:{fr:'A pied — 8 min depuis Place Masséna',en:'On foot — 8 min from Place Masséna',es:'A pie — 8 min desde Place Masséna'},
+   link:'https://www.nicetourisme.com/',ll:{fr:'Voir les horaires',en:'View schedule',es:'Ver horarios'},
+   review:{fr:'"Réveil idéal face à la mer. Instructeurs excellents."',en:'"Ideal wake-up facing the sea. Excellent instructors."',es:'"Despertar ideal frente al mar. Excelentes instructores."'},budget:['eco','moyen','premium']}
+],
+
+/* ── RESTAURANTS MIDI ──────────────────────────────────────────────────── */
+restaurant_midi:[
+  {name:'Chez René Socca',start:690,end:810,slot:'midi',
+   desc:{fr:'La socca la plus célèbre de Nice. Pois chiches grillés, petits farcis et daube niçoise dans une adresse populaire depuis 1943.',en:'Nice\'s most famous socca. Grilled chickpeas, stuffed vegetables and Nice-style daube in a popular address since 1943.',es:'La socca más famosa de Niza. Garbanzos a la parrilla y verduras rellenas desde 1943.'},
+   rating:'4.6',travel:{fr:'Tramway T1 — 12 min depuis Place Masséna',en:'Tram T1 — 12 min from Place Masséna',es:'Tranvía T1 — 12 min desde Place Masséna'},
+   link:'https://www.nicetourisme.com/',ll:{fr:'Voir le plan',en:'View map',es:'Ver mapa'},
+   review:{fr:'"Authentique et délicieux. La socca reste la meilleure de Nice."',en:'"Authentic and delicious. The socca remains the best in Nice."',es:'"Auténtico y delicioso. La socca sigue siendo la mejor de Niza."'},budget:['eco','moyen','premium']},
+  {name:'Le Bistrot d\'Antoine',start:720,end:840,slot:'midi',
+   desc:{fr:'Cuisine niçoise traditionnelle revisitée dans une salle conviviale du Vieux-Nice. Carte courte et produits du marché.',en:'Traditional Nice cuisine revisited in a convivial dining room in Old Nice. Short menu with market produce.',es:'Cocina nizarda tradicional revisitada en el Viejo Niza. Menú corto con productos del mercado.'},
+   rating:'4.7',travel:{fr:'Tramway T1 — 12 min depuis Place Masséna',en:'Tram T1 — 12 min from Place Masséna',es:'Tranvía T1 — 12 min desde Place Masséna'},
+   link:'https://www.nicetourisme.com/',ll:{fr:'Réserver',en:'Book',es:'Reservar'},
+   review:{fr:'"Le meilleur bistrot de Nice. Réservation indispensable."',en:'"The best bistro in Nice. Reservation essential."',es:'"El mejor bistrot de Niza. Reserva imprescindible."'},budget:['moyen','premium']},
+  {name:'Keisuke Matsushima',start:720,end:840,slot:'midi',
+   desc:{fr:'Gastronomie franco-japonaise raffinée en plein centre de Nice. Formule déjeuner élégante avec produits locaux.',en:'Refined Franco-Japanese gastronomy in the heart of Nice. Elegant lunch menu with local produce.',es:'Gastronomía franco-japonesa refinada en el centro de Niza. Menú de almuerzo elegante.'},
+   rating:'4.8',travel:{fr:'A pied — 5 min depuis Place Masséna',en:'On foot — 5 min from Place Masséna',es:'A pie — 5 min desde Place Masséna'},
+   link:'https://keisukematsushima.com/',ll:{fr:'Réserver',en:'Book',es:'Reservar'},
+   review:{fr:'"Expérience culinaire unique, fusion maîtrisée."',en:'"Unique culinary experience, masterful fusion."',es:'"Experiencia culinaria única, fusión magistral."'},budget:['premium']},
+  {name:'Café de Turin',start:720,end:840,slot:'midi',
+   desc:{fr:'Institution niçoise depuis 1908. La meilleure adresse pour les fruits de mer et les oursins sur la Place Garibaldi.',en:'Nice institution since 1908. The best address for seafood and sea urchins on Place Garibaldi.',es:'Institución nizarda desde 1908. La mejor dirección para mariscos en la Plaza Garibaldi.'},
+   rating:'4.5',travel:{fr:'Tramway T1 — 8 min depuis Place Masséna',en:'Tram T1 — 8 min from Place Masséna',es:'Tranvía T1 — 8 min desde Place Masséna'},
+   link:'https://www.cafedeturin.fr/',ll:{fr:'Réserver',en:'Book',es:'Reservar'},
+   review:{fr:'"Les fruits de mer les plus frais de Nice. Terrasse incontournable."',en:'"The freshest seafood in Nice. Essential terrace."',es:'"Los mariscos más frescos de Niza. Terraza imprescindible."'},budget:['moyen','premium']}
+],
+
+/* ── RESTAURANTS SOIR ──────────────────────────────────────────────────── */
+restaurant_soir:[
+  {name:'L\'Aromate',start:1170,end:1320,slot:'soir',
+   desc:{fr:'Table étoilée Michelin du chef Mickael Gracieux. Cuisine créative aux saveurs méditerranéennes dans un cadre intimiste.',en:'Michelin-starred table by chef Mickael Gracieux. Creative Mediterranean cuisine in an intimate setting.',es:'Mesa con estrella Michelin del chef Mickael Gracieux. Cocina creativa mediterránea.'},
+   rating:'4.9',travel:{fr:'Bus 12 — 15 min depuis Place Masséna',en:'Bus 12 — 15 min from Place Masséna',es:'Bus 12 — 15 min desde Place Masséna'},
+   link:'https://www.laromate.fr/',ll:{fr:'Réserver',en:'Book',es:'Reservar'},
+   review:{fr:'"Un repas mémorable. Service impeccable et cuisine d\'exception."',en:'"A memorable meal. Impeccable service and exceptional cuisine."',es:'"Una comida memorable. Servicio impecable y cocina de excepción."'},budget:['premium']},
+  {name:'Jan Restaurant',start:1200,end:1380,slot:'soir',
+   desc:{fr:'Cuisine du chef sud-africain Jan Hendrik van der Westhuizen, étoilé Michelin. Expérience gastronomique unique à Nice.',en:'Cuisine by South African Michelin-starred chef Jan Hendrik. Unique gastronomic experience in Nice.',es:'Cocina del chef sudafricano con estrella Michelin Jan Hendrik. Experiencia gastronómica única.'},
+   rating:'4.8',travel:{fr:'A pied — 10 min depuis Place Masséna',en:'On foot — 10 min from Place Masséna',es:'A pie — 10 min desde Place Masséna'},
+   link:'https://www.restaurantjan.com/',ll:{fr:'Réserver',en:'Book',es:'Reservar'},
+   review:{fr:'"Une des meilleures tables de la Côte d\'Azur. Exceptionnel."',en:'"One of the best restaurants on the Côte d\'Azur. Exceptional."',es:'"Una de las mejores mesas de la Costa Azul. Excepcional."'},budget:['premium']},
+  {name:'Le Séjour Café',start:1170,end:1320,slot:'soir',
+   desc:{fr:'Restaurant de cuisine méditerranéenne moderne dans une salle élégante du centre-ville. Carte saisonnière et vins locaux.',en:'Modern Mediterranean cuisine restaurant in an elegant dining room. Seasonal menu and local wines.',es:'Restaurante de cocina mediterránea moderna. Menú de temporada y vinos locales.'},
+   rating:'4.6',travel:{fr:'A pied — 8 min depuis Place Masséna',en:'On foot — 8 min from Place Masséna',es:'A pie — 8 min desde Place Masséna'},
+   link:'https://www.nicetourisme.com/',ll:{fr:'Réserver',en:'Book',es:'Reservar'},
+   review:{fr:'"Excellent rapport qualité-prix pour un dîner élégant."',en:'"Excellent value for an elegant dinner."',es:'"Excelente relación calidad-precio para una cena elegante."'},budget:['moyen','premium']},
+  {name:'La Merenda',start:1140,end:1260,slot:'soir',
+   desc:{fr:'Minuscule trattoria du Vieux-Nice sans réservation possible. Cuisine niçoise authentique et familiale. Arrivez tôt.',en:'Tiny Old Nice trattoria, no reservations. Authentic family-style Nice cuisine. Arrive early.',es:'Pequeña trattoria del Viejo Niza sin reservas. Cocina nizarda auténtica. Llegar temprano.'},
+   rating:'4.7',travel:{fr:'Tramway T1 — 12 min depuis Place Masséna',en:'Tram T1 — 12 min from Place Masséna',es:'Tranvía T1 — 12 min desde Place Masséna'},
+   link:'https://www.nicetourisme.com/',ll:{fr:'Voir le plan',en:'View map',es:'Ver mapa'},
+   review:{fr:'"La table la plus authentique de Nice. Arrivez avant 19h30."',en:'"The most authentic table in Nice. Arrive before 7:30pm."',es:'"La mesa más auténtica de Niza. Llegue antes de las 19:30."'},budget:['eco','moyen']},
+  {name:'Peixes',start:1170,end:1320,slot:'soir',
+   desc:{fr:'Restaurant de poissons et fruits de mer frais du pêcheur, face au port de Nice. Grillades et ceviche de saison.',en:'Fresh fish and seafood restaurant facing Nice port. Grills and seasonal ceviche.',es:'Restaurante de pescado fresco y mariscos frente al puerto de Niza.'},
+   rating:'4.5',travel:{fr:'A pied — 18 min depuis Place Masséna',en:'On foot — 18 min from Place Masséna',es:'A pie — 18 min desde Place Masséna'},
+   link:'https://www.nicetourisme.com/',ll:{fr:'Réserver',en:'Book',es:'Reservar'},
+   review:{fr:'"Le poisson le plus frais de Nice, dans une adresse confidentielle."',en:'"The freshest fish in Nice, at a discreet address."',es:'"El pescado más fresco de Niza, en una dirección discreta."'},budget:['moyen','premium']}
+],
+
+/* ── CONTEXTUELS (marché, brunch) ──────────────────────────────────────── */
+marche:[
+  {name:'Marché du Cours Saleya',start:480,end:780,slot:'matin',days:[2,4,6],
+   desc:{fr:'L\'un des plus beaux marchés provençaux de France : fleurs coupées, fruits et légumes de saison, olives, herbes et spécialités niçoises. Ne manquez pas les fromages locaux.',en:'One of the most beautiful Provençal markets in France: cut flowers, seasonal fruit and vegetables, olives, herbs and Nice specialities.',es:'Uno de los mercados provenzales más hermosos de Francia: flores, frutas y verduras de temporada, aceitunas y especialidades de Niza.'},
+   rating:'4.9',travel:{fr:'Tramway T1 — 12 min depuis Place Masséna',en:'Tram T1 — 12 min from Place Masséna',es:'Tranvía T1 — 12 min desde Place Masséna'},
+   link:'https://www.nicetourisme.com/marche-cours-saleya',ll:{fr:'Voir le plan',en:'View map',es:'Ver mapa'},
+   review:{fr:'"Incontournable un mardi, jeudi ou samedi matin. Arrivez avant 10h."',en:'"A must on Tuesday, Thursday or Saturday morning. Arrive before 10am."',es:'"Imprescindible un martes, jueves o sábado por la mañana. Llegar antes de las 10h."'},budget:['eco','moyen','premium']},
+  {name:'Marché de la Libération',start:510,end:750,slot:'matin',days:[2,3,4,5,6],
+   desc:{fr:'Marché de quartier animé très prisé des Niçois. Ambiance authentique, producteurs locaux et prix abordables.',en:'Lively neighbourhood market popular with locals. Authentic atmosphere, local producers and affordable prices.',es:'Animado mercado de barrio muy popular entre los nizardos. Ambiente auténtico y precios asequibles.'},
+   rating:'4.5',travel:{fr:'Tramway T2 — 15 min depuis Place Masséna',en:'Tram T2 — 15 min from Place Masséna',es:'Tranvía T2 — 15 min desde Place Masséna'},
+   link:'https://www.nicetourisme.com/',ll:{fr:'Voir le plan',en:'View map',es:'Ver mapa'},
+   review:{fr:'"Le marché des vrais Niçois. Moins touristique, plus authentique."',en:'"The market of real Nice locals. Less touristy, more authentic."',es:'"El mercado de los verdaderos nizardos. Menos turístico, más auténtico."'},budget:['eco','moyen','premium']}
+],
+
+brunch:[
+  {name:'Brunch au Couleurs Jardin',start:630,end:810,slot:'matin',days:[0,7],
+   desc:{fr:'Brunch dominical généreux dans un cadre verdoyant : viennoiseries maison, oeufs en tous genres, jus frais et mimosas.',en:'Generous Sunday brunch in a green setting: homemade pastries, eggs, fresh juices and mimosas.',es:'Brunch dominical generoso en un entorno verde: bollería casera, huevos, zumos frescos y mimosas.'},
+   rating:'4.6',travel:{fr:'A pied — 12 min depuis Place Masséna',en:'On foot — 12 min from Place Masséna',es:'A pie — 12 min desde Place Masséna'},
+   link:'https://www.nicetourisme.com/',ll:{fr:'Réserver',en:'Book',es:'Reservar'},
+   review:{fr:'"Le meilleur brunch du dimanche à Nice. Réservation conseillée."',en:'"The best Sunday brunch in Nice. Booking recommended."',es:'"El mejor brunch dominical en Niza. Se recomienda reservar."'},budget:['moyen','premium']},
+  {name:'Brunch La Petite Maison',start:660,end:840,slot:'matin',days:[0,7],
+   desc:{fr:'Brunch méditerranéen raffiné dans l\'une des adresses les plus réputées de Nice. Mezze, pissaladière et douceurs maison.',en:'Refined Mediterranean brunch at one of Nice\'s most reputed addresses. Mezze, pissaladière and homemade sweets.',es:'Brunch mediterráneo refinado en una de las direcciones más reputadas de Niza.'},
+   rating:'4.7',travel:{fr:'A pied — 5 min depuis Place Masséna',en:'On foot — 5 min from Place Masséna',es:'A pie — 5 min desde Place Masséna'},
+   link:'https://www.lapetitemaisondenicea.com/',ll:{fr:'Réserver',en:'Book',es:'Reservar'},
+   review:{fr:'"Brunch élégant et généreux. La référence à Nice."',en:'"Elegant and generous brunch. The reference in Nice."',es:'"Brunch elegante y generoso. La referencia en Niza."'},budget:['premium']}
+]
+
+};
+
+/* ── TEXTES MULTILINGUES ──────────────────────────────────────────────── */
+const DT={
+fr:{
+  continue:'Continuer →',generate:'Générer mon guide →',
+  q2:{step:'Étape 2 / 8',text:'Vous voyagez…',hint:'Cela nous aide à adapter les recommandations.',opts:[{v:'couple',i:'couple',l:'En couple'},{v:'famille',i:'famille',l:'En famille'},{v:'solo',i:'solo',l:'Solo'},{v:'amis',i:'amis',l:'Entre amis'}]},
+  q3:{step:'Étape 3 / 8',text:'Durée de votre séjour ?',hint:'Nombre de nuits à Nice.',dur:[{v:0,l:'Journée'},{v:1,l:'1 nuit'},{v:2,l:'2 nuits'},{v:3,l:'3 nuits'},{v:4,l:'4 nuits'},{v:5,l:'5 nuits'},{v:7,l:'7 nuits+',custom:true}]},
+  q4:{step:'Étape 4 / 8',text:'Vos dates de séjour ?',hint:'Pour adapter le guide à la saison et aux événements locaux.',arrive:'Arrivée',depart:'Départ',arrHour:'Heure d\'arrivée',depHour:'Heure de départ'},
+  q5:{step:'Étape 5 / 8',text:'Vos horaires d\'arrivée et de départ ?',hint:'Nous n\'inclurons que les activités accessibles selon vos horaires.',arrHour:'Heure d\'arrivée à l\'hôtel',depHour:'Heure de départ de l\'hôtel'},
+  q6:{step:'Étape 6 / 8',text:'Quand souhaitez-vous sortir ?',hint:'Vous pouvez sélectionner plusieurs créneaux.',hint2:'Jours indisponibles (optionnel)',moments:[{v:'matin',i:'matin',l:'Matin',s:'8h – 14h'},{v:'apm',i:'full',l:'Après-midi',s:'14h – 19h'},{v:'soir',i:'soir',l:'Soirée',s:'19h – 23h'},{v:'full',i:'full',l:'Journée',s:'Toute la journée'}],jours:[{v:'0',l:'Aucun'},{v:'1',l:'Lun'},{v:'2',l:'Mar'},{v:'3',l:'Mer'},{v:'4',l:'Jeu'},{v:'5',l:'Ven'},{v:'6',l:'Sam'},{v:'7',l:'Dim'}]},
+  q7:{step:'Étape 7 / 8',text:'Vos centres d\'intérêt ?',hint:'Sélectionnez tout ce qui vous inspire.',interests:[{v:'culture',i:'culture',l:'Culture',s:'Musées, monuments'},{v:'gastro',i:'gastro',l:'Gastronomie',s:'Restaurants, marchés'},{v:'nature',i:'nature',l:'Nature',s:'Parcs, balades'},{v:'plage',i:'plage',l:'Plage',s:'Mer & farniente'},{v:'shopping',i:'shopping',l:'Shopping',s:'Boutiques, créateurs'},{v:'nightlife',i:'nightlife',l:'Soirées',s:'Bars, concerts'},{v:'sport',i:'sport',l:'Sport',s:'Vélo, randonnée'},{v:'bienetr',i:'bienetr',l:'Bien-être',s:'Spa, détente'},{v:'art',i:'culture',l:'Art & Galeries',s:'Expositions, galeries'},{v:'artisanat',i:'shopping',l:'Artisanat',s:'Produits locaux, savoir-faire'},{v:'insolite',i:'nature',l:'Insolite',s:'Lieux cachés, atypiques'},{v:'excursion',i:'culture',l:'Excursions',s:'Monaco, Eze, Cannes...'}],counts:['Sélectionnez au moins un centre d\'intérêt','1 sélectionné','2 sélectionnés','3 sélectionnés','4 sélectionnés','5 ou plus sélectionnés'],catLabels:{culture:'Culture',gastro:'Gastronomie',nature:'Nature',plage:'Plage',shopping:'Shopping',nightlife:'Soirées',sport:'Sport',bienetr:'Bien-être',restaurant_midi:'Déjeuner',restaurant_soir:'Dîner',marche:'Marché',brunch:'Brunch',art:'Art & Galeries',artisanat:'Artisanat',insolite:'Insolite',excursion:'Excursion'}},
+  q8:{step:'Étape 8 / 8',text:'Votre budget ?',hint:'Pour adapter les recommandations à vos attentes.',opts:[{v:'eco',i:'eco',l:'Économique',s:'Bon rapport qualité/prix'},{v:'moyen',i:'moyen',l:'Modéré',s:'Équilibré'},{v:'premium',i:'premium',l:'Premium',s:'Haut de gamme'}]},
+  loading:{title:'Préparation de votre guide…',sub:'Analyse de vos préférences',steps:['Analyse de vos préférences','Sélection des meilleures adresses','Vérification des horaires','Organisation de l\'itinéraire','Finalisation du guide']},
+  dayOnly:'Programme de la journée',dayLabel:'Jour',
+  midiLabel:'Déjeuner conseillé',soirLabel:'Dîner conseillé',
+  tipsTitle:'Conseils pratiques',
+  tips:['Le tramway T1 et T2 dessert l\'essentiel des sites touristiques. Ticket valable 74 minutes.','La Nice City Pass inclut musées, transports et réductions. Disponible à l\'office de tourisme.','Le marché du Cours Saleya se tient chaque matin sauf le lundi — arrivez avant 10h pour les meilleurs produits.','Réservez vos restaurants dès votre arrivée en haute saison (juillet-août).','La plupart des musées municipaux de Nice sont gratuits toute l\'année.','Lime et Pony proposent des vélos et trottinettes en libre-service partout à Nice (via app). Ils ont remplacé Vélobleu en 2024.']
+},
+en:{
+  continue:'Continue →',generate:'Generate my guide →',
+  q2:{step:'Step 2 / 8',text:'You are travelling…',hint:'This helps us tailor recommendations.',opts:[{v:'couple',i:'couple',l:'As a couple'},{v:'famille',i:'famille',l:'With family'},{v:'solo',i:'solo',l:'Solo'},{v:'amis',i:'amis',l:'With friends'}]},
+  q3:{step:'Step 3 / 8',text:'Length of your stay?',hint:'Number of nights in Nice.',dur:[{v:0,l:'Day trip'},{v:1,l:'1 night'},{v:2,l:'2 nights'},{v:3,l:'3 nights'},{v:4,l:'4 nights'},{v:5,l:'5 nights'},{v:7,l:'7 nights+',custom:true}]},
+  q4:{step:'Step 4 / 8',text:'Your travel dates?',hint:'To tailor the guide to the season and local events.',arrive:'Check-in',depart:'Check-out',arrHour:'Check-in time',depHour:'Check-out time'},
+  q5:{step:'Step 5 / 8',text:'Your arrival and departure times?',hint:'We will only include activities accessible within your schedule.',arrHour:'Arrival time at hotel',depHour:'Departure time from hotel'},
+  q6:{step:'Step 6 / 8',text:'When do you prefer to go out?',hint:'You can select multiple time slots.',hint2:'Unavailable days (optional)',moments:[{v:'matin',i:'matin',l:'Morning',s:'8am – 2pm'},{v:'apm',i:'full',l:'Afternoon',s:'2pm – 7pm'},{v:'soir',i:'soir',l:'Evening',s:'7pm – 11pm'},{v:'full',i:'full',l:'Full day',s:'All day long'}],jours:[{v:'0',l:'None'},{v:'1',l:'Mon'},{v:'2',l:'Tue'},{v:'3',l:'Wed'},{v:'4',l:'Thu'},{v:'5',l:'Fri'},{v:'6',l:'Sat'},{v:'7',l:'Sun'}]},
+  q7:{step:'Step 7 / 8',text:'Your interests?',hint:'Select everything that inspires you.',interests:[{v:'culture',i:'culture',l:'Culture',s:'Museums, monuments'},{v:'gastro',i:'gastro',l:'Gastronomy',s:'Restaurants, markets'},{v:'nature',i:'nature',l:'Nature',s:'Parks, walks'},{v:'plage',i:'plage',l:'Beach',s:'Sea & relaxation'},{v:'shopping',i:'shopping',l:'Shopping',s:'Boutiques, designers'},{v:'nightlife',i:'nightlife',l:'Nightlife',s:'Bars, concerts'},{v:'sport',i:'sport',l:'Sport',s:'Cycling, hiking'},{v:'bienetr',i:'bienetr',l:'Wellness',s:'Spa, relaxation'},{v:'art',i:'culture',l:'Art & Galleries',s:'Exhibitions, galleries'},{v:'artisanat',i:'shopping',l:'Crafts',s:'Local products, know-how'},{v:'insolite',i:'nature',l:'Off the beaten path',s:'Hidden spots, unusual'},{v:'excursion',i:'culture',l:'Day trips',s:'Monaco, Eze, Cannes...'}],counts:['Select at least one interest','1 selected','2 selected','3 selected','4 selected','5+ selected'],catLabels:{culture:'Culture',gastro:'Gastronomy',nature:'Nature',plage:'Beach',shopping:'Shopping',nightlife:'Nightlife',sport:'Sport',bienetr:'Wellness',restaurant_midi:'Lunch',restaurant_soir:'Dinner',marche:'Market',brunch:'Brunch',art:'Art & Galleries',artisanat:'Crafts',insolite:'Off the beaten path',excursion:'Day trip'}},
+  q8:{step:'Step 8 / 8',text:'Your budget?',hint:'To match recommendations to your expectations.',opts:[{v:'eco',i:'eco',l:'Budget',s:'Best value'},{v:'moyen',i:'moyen',l:'Moderate',s:'Balanced'},{v:'premium',i:'premium',l:'Premium',s:'High-end'}]},
+  loading:{title:'Preparing your guide…',sub:'Analysing your preferences',steps:['Analysing your preferences','Selecting the best spots','Checking schedules','Organising the itinerary','Finalising your guide']},
+  dayOnly:'Day programme',dayLabel:'Day',
+  midiLabel:'Recommended lunch',soirLabel:'Recommended dinner',
+  tipsTitle:'Practical tips',
+  tips:['Tram lines T1 and T2 cover most tourist sites. Ticket valid for 74 minutes.','The Nice City Pass includes museums, transport and discounts. Available at the tourist office.','The Cours Saleya market is open every morning except Monday — arrive before 10am for the best produce.','Book restaurants upon arrival during peak season (July-August).','Most municipal museums in Nice are free all year round.','Lime and Pony offer bikes and e-scooters across Nice (via app). They replaced Vélobleu in 2024.']
+},
+es:{
+  continue:'Continuar →',generate:'Generar mi guía →',
+  q2:{step:'Paso 2 / 8',text:'Viaja…',hint:'Esto nos ayuda a personalizar las recomendaciones.',opts:[{v:'couple',i:'couple',l:'En pareja'},{v:'famille',i:'famille',l:'Con familia'},{v:'solo',i:'solo',l:'Solo'},{v:'amis',i:'amis',l:'Con amigos'}]},
+  q3:{step:'Paso 3 / 8',text:'¿Duración de su estancia?',hint:'Número de noches en Niza.',dur:[{v:0,l:'Un día'},{v:1,l:'1 noche'},{v:2,l:'2 noches'},{v:3,l:'3 noches'},{v:4,l:'4 noches'},{v:5,l:'5 noches'},{v:7,l:'7 noches+',custom:true}]},
+  q4:{step:'Paso 4 / 8',text:'¿Sus fechas de estancia?',hint:'Para adaptar la guía a la temporada y los eventos locales.',arrive:'Llegada',depart:'Salida',arrHour:'Hora de llegada',depHour:'Hora de salida'},
+  q5:{step:'Paso 5 / 8',text:'¿Sus horarios de llegada y salida?',hint:'Solo incluiremos actividades accesibles según sus horarios.',arrHour:'Hora de llegada al hotel',depHour:'Hora de salida del hotel'},
+  q6:{step:'Paso 6 / 8',text:'¿Cuándo prefiere salir?',hint:'Puede seleccionar varios horarios.',hint2:'Días no disponibles (opcional)',moments:[{v:'matin',i:'matin',l:'Mañana',s:'8h – 14h'},{v:'apm',i:'full',l:'Tarde',s:'14h – 19h'},{v:'soir',i:'soir',l:'Noche',s:'19h – 23h'},{v:'full',i:'full',l:'Día completo',s:'Todo el día'}],jours:[{v:'0',l:'Ninguno'},{v:'1',l:'Lun'},{v:'2',l:'Mar'},{v:'3',l:'Mié'},{v:'4',l:'Jue'},{v:'5',l:'Vie'},{v:'6',l:'Sáb'},{v:'7',l:'Dom'}]},
+  q7:{step:'Paso 7 / 8',text:'¿Sus intereses?',hint:'Seleccione todo lo que le inspire.',interests:[{v:'culture',i:'culture',l:'Cultura',s:'Museos, monumentos'},{v:'gastro',i:'gastro',l:'Gastronomía',s:'Restaurantes, mercados'},{v:'nature',i:'nature',l:'Naturaleza',s:'Parques, paseos'},{v:'plage',i:'plage',l:'Playa',s:'Mar y descanso'},{v:'shopping',i:'shopping',l:'Compras',s:'Tiendas, diseñadores'},{v:'nightlife',i:'nightlife',l:'Vida nocturna',s:'Bares, conciertos'},{v:'sport',i:'sport',l:'Deporte',s:'Ciclismo, senderismo'},{v:'bienetr',i:'bienetr',l:'Bienestar',s:'Spa, relajación'},{v:'art',i:'culture',l:'Arte & Galerías',s:'Exposiciones, galerías'},{v:'artisanat',i:'shopping',l:'Artesanía',s:'Productos locales'},{v:'insolite',i:'nature',l:'Insólito',s:'Lugares ocultos, atípicos'},{v:'excursion',i:'culture',l:'Excursiones',s:'Mónaco, Eze, Cannes...'}],counts:['Seleccione al menos un interés','1 seleccionado','2 seleccionados','3 seleccionados','4 seleccionados','5+ seleccionados'],catLabels:{culture:'Cultura',gastro:'Gastronomía',nature:'Naturaleza',plage:'Playa',shopping:'Compras',nightlife:'Vida nocturna',sport:'Deporte',bienetr:'Bienestar',restaurant_midi:'Almuerzo',restaurant_soir:'Cena',marche:'Mercado',brunch:'Brunch',art:'Arte & Galerías',artisanat:'Artesanía',insolite:'Insólito',excursion:'Excursión'}},
+  q8:{step:'Paso 8 / 8',text:'¿Su presupuesto?',hint:'Para adaptar las recomendaciones a sus expectativas.',opts:[{v:'eco',i:'eco',l:'Económico',s:'Mejor relación calidad/precio'},{v:'moyen',i:'moyen',l:'Moderado',s:'Equilibrado'},{v:'premium',i:'premium',l:'Premium',s:'Alto nivel'}]},
+  loading:{title:'Preparando su guía…',sub:'Analizando sus preferencias',steps:['Analizando sus preferencias','Seleccionando los mejores lugares','Verificando los horarios','Organizando el itinerario','Finalizando su guía']},
+  dayOnly:'Programa del día',dayLabel:'Día',
+  midiLabel:'Almuerzo recomendado',soirLabel:'Cena recomendada',
+  tipsTitle:'Consejos prácticos',
+  tips:['Los tranvías T1 y T2 cubren la mayoría de los sitios turísticos. Billete válido 74 minutos.','El Nice City Pass incluye museos, transporte y descuentos. Disponible en la oficina de turismo.','El mercado del Cours Saleya abre cada mañana excepto el lunes — llegar antes de las 10h.','Reserve restaurantes al llegar en temporada alta (julio-agosto).','La mayoría de los museos municipales de Niza son gratuitos todo el año.','Lime y Pony ofrecen bicicletas y patinetes eléctricos en Niza (por app). Reemplazaron al Vélobleu en 2024.']
+}
+};
+
+/* ── ICÔNES SVG ──────────────────────────────────────────────────────────── */
+const ICONS={
+  couple:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  famille:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+  solo:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+  amis:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  matin:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/></svg>`,
+  soir:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
+  full:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>`,
+  culture:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><line x1="2" y1="22" x2="22" y2="22"/><rect x="3" y="14" width="4" height="8"/><rect x="10" y="11" width="4" height="11"/><rect x="17" y="7" width="4" height="15"/><path d="M2 3l10-2 10 4"/></svg>`,
+  gastro:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>`,
+  nature:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 22"/><path d="M9.5 7.7C6.6 9.4 5 12.5 5 16"/><path d="M22 3c-3.8 1-6.5 4-7 8"/><path d="M22 3s-10 0-10 11c0 3 1 5 1 5"/></svg>`,
+  plage:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>`,
+  shopping:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`,
+  nightlife:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+  sport:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8l-4 8"/><path d="M12 8l4 8"/><path d="M8.5 14h7"/></svg>`,
+  bienetr:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
+  eco:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
+  moyen:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`,
+  premium:`<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
+};
+
+/* ── UTILITAIRES ──────────────────────────────────────────────────────── */
+function fetchWeather(){fetch('https://api.open-meteo.com/v1/forecast?latitude=43.7102&longitude=7.2620&current_weather=true').then(r=>r.json()).then(d=>{const t=Math.round(d.current_weather.temperature),c=d.current_weather.weathercode;let ds='Ensoleille · Nice',adv='Guide adapte<br>a la meteo';if(c>=61){ds='Pluvieux · Nice';adv='Activites couvertes<br>privilegiees'}else if(c>=51){ds='Nuageux · Nice';adv='Guide mixte'}document.getElementById('w-temp').textContent=t+'°C';document.getElementById('w-desc').textContent=ds;document.getElementById('w-advice').innerHTML=adv;}).catch(()=>{});}
+fetchWeather();
+
+function minToStr(m){const h=Math.floor(m/60),mn=m%60;return h+'h'+(mn?String(mn).padStart(2,'0'):'00');}
+function strToMin(s){if(!s)return null;const p=s.split(':');return parseInt(p[0])*60+parseInt(p[1]);}
+function overlaps(a,b){return a.start<b.end && b.start<a.end;}
+
+function hoursOptions(startH=0,endH=23){
+  let opts='';
+  for(let h=startH;h<=endH;h++) opts+=`<option value="${String(h).padStart(2,'0')}:00">${h}h00</option>`;
+  return opts;
+}
+
+/* ── NAVIGATION DÉMO ─────────────────────────────────────────────────── */
+function dShowScreen(id){document.querySelectorAll('.d-screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function dGo(t){
+  if(t==='load'){dStartLoading();return;}
+  const r={2:dRenderQ2,3:dRenderQ3,4:dRenderQ4,6:dRenderQ6,7:dRenderQ7,8:dRenderQ8};
+  if(r[t])r[t]();
+  dShowScreen('ds'+t);
+  const prevMap={2:null,3:2,4:3,6:4,7:6,8:7};
+  const prev=prevMap[t];
+  const card=document.querySelector('#ds'+t+' .d-card');
+  const existing=document.getElementById('back-btn-'+t);
+  if(existing)existing.remove();
+  if(prev&&card){
+    const L=DA.lang;
+    const backLabel=L==='fr'?'← Retour':L==='en'?'← Back':'← Volver';
+    const btn=document.createElement('button');
+    btn.className='d-btn-back';btn.id='back-btn-'+t;
+    btn.textContent=backLabel;btn.onclick=()=>dGo(prev);
+    card.insertBefore(btn,card.firstChild);
+  }
+}
+function dSelLang(l){DA.lang=l;['fr','en','es'].forEach(x=>document.getElementById('lb-'+x).classList.remove('sel'));document.getElementById('lb-'+l).classList.add('sel');}
+
+function dRenderQ2(){const q=DT[DA.lang].q2,L=DA.lang;document.getElementById('dqs2').textContent=q.step;document.getElementById('dqt2').textContent=q.text;document.getElementById('dqh2').textContent=q.hint;document.getElementById('dbtn2').textContent=DT[L].continue;document.getElementById('dbtn2').disabled=!DA.profile;document.getElementById('dqo2').innerHTML=q.opts.map(o=>`<div class="opt${DA.profile===o.v?' sel':''}" id="dp-${o.v}" onclick="dSelSingle('profile','${o.v}','dp-','dbtn2')"><div class="chk">✓</div><div class="opt-icon">${ICONS[o.i]||''}</div><div class="opt-label">${o.l}</div></div>`).join('');}
+
+function dRenderQ3(){const q=DT[DA.lang].q3,L=DA.lang;document.getElementById('dqs3').textContent=q.step;document.getElementById('dqt3').textContent=q.text;document.getElementById('dqh3').textContent=q.hint;document.getElementById('dbtn3').textContent=DT[L].continue;document.getElementById('dbtn3').disabled=DA.duration===null;document.getElementById('ddur-grid').innerHTML=q.dur.map(d=>`<div class="dur-btn${DA.duration===d.v?' sel':''}" id="dd-${d.v}" onclick="dSelDur(${d.v})"><div class="dur-num">${d.v===0?'1':d.v===7?'7+':d.v}</div><div class="dur-label">${d.l}</div></div>`).join('');}
+function dSelDur(v){
+  if(v===7){
+    document.querySelectorAll('[id^="dd-"]').forEach(e=>e.classList.remove('sel'));
+    document.getElementById('dd-7').classList.add('sel');
+    let customDiv=document.getElementById('dur-custom');
+    if(!customDiv){
+      customDiv=document.createElement('div');
+      customDiv.id='dur-custom';
+      customDiv.style='margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap';
+      const L=DA.lang;
+      const lbl=L==='fr'?'Nombre de nuits exact :':L==='en'?'Exact number of nights:':'Número exacto de noches:';
+      customDiv.innerHTML='<label style="font-size:13px;color:var(--mid)">'+lbl+'</label><input type="number" id="dur-custom-val" min="7" max="30" value="7" style="width:70px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-family:sans-serif;font-size:14px;color:var(--dark);background:var(--off);outline:none" oninput="dSetCustomDur(this.value)">';
+      document.getElementById('ddur-grid').after(customDiv);
+    }
+    customDiv.style.display='flex';
+    DA.duration=7;
+    document.getElementById('dbtn3').disabled=false;
+  } else {
+    DA.duration=v;
+    document.querySelectorAll('[id^="dd-"]').forEach(e=>e.classList.remove('sel'));
+    document.getElementById('dd-'+v).classList.add('sel');
+    const customDiv=document.getElementById('dur-custom');
+    if(customDiv)customDiv.style.display='none';
+    document.getElementById('dbtn3').disabled=false;
+  }
+}
+function dSetCustomDur(val){const n=parseInt(val);if(n>=7&&n<=30)DA.duration=n;}
+
+function dRenderQ4(){
+  const q=DT[DA.lang].q4,L=DA.lang;
+  document.getElementById('dqs4').textContent=q.step;
+  document.getElementById('dqt4').textContent=q.text;
+  document.getElementById('dqh4').textContent=q.hint;
+  document.getElementById('ddl-arrive').textContent=q.arrive;
+  document.getElementById('ddl-depart').textContent=q.depart;
+  const arrLabel=document.getElementById('darr-label');
+  const depLabel=document.getElementById('ddep-label');
+  if(arrLabel)arrLabel.textContent=q.arrHour||'Heure d\'arrivée';
+  if(depLabel)depLabel.textContent=q.depHour||'Heure de départ';
+  document.getElementById('dbtn4').textContent=DT[L].continue;
+  const today=new Date().toISOString().split('T')[0];
+  const di=document.getElementById('ddate-in'),dout=document.getElementById('ddate-out');
+  di.min=today;dout.min=today;
+  if(DA.dateIn)di.value=DA.dateIn;
+  if(DA.dateOut)dout.value=DA.dateOut;
+  const arrSel=document.getElementById('dsel-arr');
+  const depSel=document.getElementById('dsel-dep');
+  if(arrSel){arrSel.innerHTML=hoursOptions(6,22);if(DA.arrivalHour)arrSel.value=DA.arrivalHour;}
+  if(depSel){depSel.innerHTML=hoursOptions(7,23);if(DA.departureHour)depSel.value=DA.departureHour;}
+  dCheckDates();
+}
+function dCheckDates(){
+  DA.dateIn=document.getElementById('ddate-in').value;
+  DA.dateOut=document.getElementById('ddate-out').value;
+  const arrSel=document.getElementById('dsel-arr');
+  const depSel=document.getElementById('dsel-dep');
+  if(arrSel)DA.arrivalHour=arrSel.value;
+  if(depSel)DA.departureHour=depSel.value;
+  const ok=DA.dateIn&&DA.dateOut&&DA.dateOut>=DA.dateIn&&DA.arrivalHour&&DA.departureHour;
+  document.getElementById('dbtn4').disabled=!ok;
+}
+
+function dRenderQ5(){
+  const q=DT[DA.lang].q5,L=DA.lang;
+  document.getElementById('dqs5').textContent=q.step;
+  document.getElementById('dqt5').textContent=q.text;
+  document.getElementById('dqh5').textContent=q.hint;
+  document.getElementById('dbtn5').textContent=DT[L].continue;
+  document.getElementById('dbtn5').disabled=!(DA.arrivalHour&&DA.departureHour);
+  const arrSel=document.getElementById('dsel-arr');
+  const depSel=document.getElementById('dsel-dep');
+  if(!arrSel||!depSel)return;
+  const arrLabel=document.getElementById('darr-label');
+  const depLabel=document.getElementById('ddep-label');
+  if(arrLabel)arrLabel.textContent=q.arrHour;
+  if(depLabel)depLabel.textContent=q.depHour;
+  arrSel.innerHTML=hoursOptions(6,22);
+  depSel.innerHTML=hoursOptions(7,23);
+  if(DA.arrivalHour)arrSel.value=DA.arrivalHour;
+  if(DA.departureHour)depSel.value=DA.departureHour;
+}
+function dCheckHours(){
+  DA.arrivalHour=document.getElementById('dsel-arr').value;
+  DA.departureHour=document.getElementById('dsel-dep').value;
+  const ok=DA.arrivalHour&&DA.departureHour&&DA.departureHour>DA.arrivalHour;
+  document.getElementById('dbtn5').disabled=!ok;
+}
+
+function dRenderQ6(){
+  const q=DT[DA.lang].q6,L=DA.lang;
+  document.getElementById('dqs6').textContent=q.step;document.getElementById('dqt6').textContent=q.text;document.getElementById('dqh6').textContent=q.hint;document.getElementById('dqh6b').textContent=q.hint2;
+  document.getElementById('dbtn6').textContent=DT[L].continue;document.getElementById('dbtn6').disabled=DA.moments.length===0;
+  document.getElementById('dmoment-grid').innerHTML=q.moments.map(m=>`<div class="moment-btn${DA.moments.includes(m.v)?' sel':''}" id="dm-${m.v}" onclick="dToggleMoment('${m.v}')"><div class="moment-icon">${ICONS[m.i]||''}</div><div class="moment-label">${m.l}</div><div class="moment-sub">${m.s}</div></div>`).join('');
+  document.getElementById('dunavail-grid').innerHTML=q.jours.map(j=>`<div class="unavail-btn${DA.unavail.includes(j.v)?' sel':''}" id="du-${j.v}" onclick="dToggleUnavail('${j.v}')">${j.l}</div>`).join('');
+}
+function dToggleMoment(v){
+  if(v==='full'){
+    const allSlots=['matin','apm','soir'];
+    const allSelected=allSlots.every(s=>DA.moments.includes(s));
+    if(allSelected){DA.moments=[];allSlots.forEach(s=>{const el=document.getElementById('dm-'+s);if(el)el.classList.remove('sel');});}
+    else{DA.moments=[...allSlots];allSlots.forEach(s=>{const el=document.getElementById('dm-'+s);if(el)el.classList.add('sel');});}
+    const fullEl=document.getElementById('dm-full');
+    if(fullEl)fullEl.classList.toggle('sel',DA.moments.length===3);
+  } else {
+    const i=DA.moments.indexOf(v);
+    if(i>-1)DA.moments.splice(i,1);else DA.moments.push(v);
+    document.getElementById('dm-'+v).classList.toggle('sel');
+    const fullEl=document.getElementById('dm-full');
+    if(fullEl)fullEl.classList.toggle('sel',['matin','apm','soir'].every(s=>DA.moments.includes(s)));
+  }
+  document.getElementById('dbtn6').disabled=DA.moments.length===0;
+}
+function dToggleUnavail(v){if(v==='0'){DA.unavail=[];document.querySelectorAll('[id^="du-"]').forEach(e=>e.classList.remove('sel'));document.getElementById('du-0').classList.add('sel');return;}document.getElementById('du-0').classList.remove('sel');const i=DA.unavail.indexOf(v);if(i>-1)DA.unavail.splice(i,1);else DA.unavail.push(v);document.getElementById('du-'+v).classList.toggle('sel');}
+
+function dRenderQ7(){const q=DT[DA.lang].q7,L=DA.lang;document.getElementById('dqs7').textContent=q.step;document.getElementById('dqt7').textContent=q.text;document.getElementById('dqh7').textContent=q.hint;document.getElementById('dbtn7').textContent=DT[L].continue;document.getElementById('dbtn7').disabled=DA.interests.length===0;document.getElementById('dint-grid').innerHTML=q.interests.map(it=>`<div class="int-btn${DA.interests.includes(it.v)?' sel':''}" id="di-${it.v}" onclick="dToggleInt('${it.v}')"><div class="int-icon">${ICONS[it.i]||''}</div><div><div class="int-label">${it.l}</div><div class="int-sub">${it.s}</div></div><div class="int-chk">✓</div></div>`).join('');dUpdateCount();}
+function dToggleInt(v){const i=DA.interests.indexOf(v);if(i>-1)DA.interests.splice(i,1);else DA.interests.push(v);document.getElementById('di-'+v).classList.toggle('sel');document.getElementById('dbtn7').disabled=DA.interests.length===0;dUpdateCount();}
+function dUpdateCount(){const c=DA.interests.length,arr=DT[DA.lang].q7.counts,el=document.getElementById('dsel-count');el.textContent=arr[Math.min(c,arr.length-1)];el.style.color=c>0?'var(--forest)':'var(--mid)';}
+
+function dRenderQ8(){const q=DT[DA.lang].q8,L=DA.lang;document.getElementById('dqs8').textContent=q.step;document.getElementById('dqt8').textContent=q.text;document.getElementById('dqh8').textContent=q.hint;document.getElementById('dbtn8').textContent=DT[L].generate;document.getElementById('dbtn8').disabled=!DA.budget;document.getElementById('dqo8').innerHTML=q.opts.map(o=>`<div class="opt${DA.budget===o.v?' sel':''}" id="db-${o.v}" onclick="dSelSingle('budget','${o.v}','db-','dbtn8')"><div class="chk">✓</div><div class="opt-icon">${ICONS[o.i]||''}</div><div class="opt-label">${o.l}</div><div class="opt-sub">${o.s}</div></div>`).join('');}
+
+function dSelSingle(f,v,p,b){DA[f]=v;document.querySelectorAll(`[id^="${p}"]`).forEach(e=>e.classList.remove('sel'));document.getElementById(p+v).classList.add('sel');document.getElementById(b).disabled=false;}
+
+function dStartLoading(){
+  const L=DA.lang,ld=DT[L].loading;
+  document.getElementById('dlt').textContent=ld.title;document.getElementById('dls-sub').textContent=ld.sub;
+  ld.steps.forEach((s,i)=>{document.getElementById('dlss'+(i+1)).textContent=s;document.getElementById('dls'+(i+1)).classList.remove('show');});
+  dShowScreen('ds-load');
+  ld.steps.forEach((_,i)=>setTimeout(()=>document.getElementById('dls'+(i+1)).classList.add('show'),(i+1)*600+200));
+  setTimeout(dBuildGuide,ld.steps.length*600+900);
+}
+
+/* ── CONSTRUCTION DU GUIDE ───────────────────────────────────────────── */
+function dBuildGuide(){
+  const L=DA.lang,profile=DA.profile||'couple',dur=DA.duration!==null?DA.duration:2,
+    budget=DA.budget||'moyen',days=dur===0?1:Math.min(dur+1,8),
+    interests=DA.interests.length>0?DA.interests:['culture','gastro'];
+  const moments=DA.moments.length>0?DA.moments:['matin','apm','soir'];
+
+  // Calcul de l'heure d'arrivée jour 1 et départ dernier jour
+  const arrMin=DA.arrivalHour?strToMin(DA.arrivalHour):480; // défaut 8h
+  const depMin=DA.departureHour?strToMin(DA.departureHour):1320; // défaut 22h
+
+  // Date d'arrivée pour calcul jour de semaine
+  let arrDate=DA.dateIn?new Date(DA.dateIn):new Date();
+
+  const pL={couple:{fr:'Romantique',en:'Romantic',es:'Romántico'},famille:{fr:'Famille',en:'Family',es:'Familia'},solo:{fr:'Solo',en:'Solo',es:'Solo'},amis:{fr:'Entre Amis',en:'With Friends',es:'Con Amigos'}};
+  const bL={eco:{fr:'Économique',en:'Budget',es:'Económico'},moyen:{fr:'Modéré',en:'Moderate',es:'Moderado'},premium:{fr:'Premium',en:'Premium',es:'Premium'}};
+  const durStr=dur===0?(L==='fr'?'1 journée':L==='en'?'1 day':'1 día'):`${dur}${dur===7?'+':''} ${L==='fr'?(dur<=1?'nuit':'nuits'):L==='en'?(dur<=1?'night':'nights'):(dur<=1?'noche':'noches')}`;
+  const mL={matin:{fr:'Matin',en:'Morning',es:'Mañana'},apm:{fr:'Après-midi',en:'Afternoon',es:'Tarde'},soir:{fr:'Soirée',en:'Evening',es:'Noche'}};
+
+  document.getElementById('dg-title').textContent=(L==='fr'?'Guide ':L==='en'?'Guide ':'Guía ')+pL[profile][L]+' — Nice';
+  let meta=`Nice · ${durStr} · ${bL[budget][L]}`;
+  if(DA.dateIn&&DA.dateOut){const fo={day:'numeric',month:'short'},lc=L==='fr'?'fr-FR':L==='en'?'en-GB':'es-ES';meta+=` · ${new Date(DA.dateIn).toLocaleDateString(lc,fo)} → ${new Date(DA.dateOut).toLocaleDateString(lc,fo)}`;}
+  document.getElementById('dg-meta').textContent=meta;
+  const intNames=interests.map(v=>DT[L].q7.interests.find(x=>x.v===v)?.l||v);
+  document.getElementById('dg-chips').innerHTML=[pL[profile][L],...intNames,...moments.map(m=>mL[m][L])].map(c=>`<span class="g-chip">${c}</span>`).join('');
+
+  // Slot → plage horaire
+  const slotRanges={matin:{s:480,e:840},apm:{s:840,e:1140},soir:{s:1140,e:1440}};
+
+  function isInMoments(p){
+    // full = toute la journée = matin + apm + soir
+    const hasMatin = moments.includes('matin') || moments.includes('full');
+    const hasApm   = moments.includes('apm')   || moments.includes('full');
+    const hasSoir  = moments.includes('soir')  || moments.includes('full');
+    if(p.slot==='midi') return true;
+    if(p.slot==='matin') return hasMatin;
+    if(p.slot==='apm')   return hasApm;
+    if(p.slot==='soir')  return hasSoir;
+    return true; // pas de slot défini = toujours inclus
+  }
+
+  function isInBudget(p){return p.budget.includes(budget)||(budget==='premium')||(p.budget.includes('moyen')&&budget==='premium');}
+
+  function filterByBudget(arr){
+    const f=arr.filter(p=>p.budget.includes(budget));
+    return f.length>0?f:arr;
+  }
+
+  let html='';
+  const usedGlobal=[]; // activités déjà utilisées sur les jours précédents
+
+  for(let day=1;day<=days;day++){
+    const dayDate=new Date(arrDate);dayDate.setDate(arrDate.getDate()+(day-1));
+    const dow=dayDate.getDay(); // 0=dim,1=lun,...,6=sam
+    const isFirstDay=(day===1);
+    const isLastDay=(day===days);
+    // heure effective de début/fin pour ce jour
+    const dayStart=isFirstDay?arrMin:480;
+    const dayEnd=isLastDay?depMin:1320;
+
+    // Label jour avec date précise
+    let dl;
+    if(days===1){
+      dl=DT[L].dayOnly;
+    } else {
+      const dayNames={
+        fr:['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
+        en:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+        es:['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado']
+      };
+      const monthNames={
+        fr:['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'],
+        en:['January','February','March','April','May','June','July','August','September','October','November','December'],
+        es:['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']
+      };
+      const dow=dayDate.getDay();
+      const dayNum=dayDate.getDate();
+      const month=dayDate.getMonth();
+      const year=dayDate.getFullYear();
+      const dn=dayNames[L]||dayNames.fr;
+      const mn=monthNames[L]||monthNames.fr;
+      if(L==='en'){
+        dl=`${dn[dow]}, ${mn[month]} ${dayNum}`;
+      } else {
+        dl=`${dn[dow]} ${dayNum} ${mn[month]}`;
+      }
+    }
+    html+=`<div class="day-label-g">${dl}</div>`;
+
+    const schedule=[]; // liste finale avec horaires
+
+    // 1. Marché contextuel (mar=2, jeu=4, sam=6)
+    if(moments.includes('matin')&&[2,4,6].includes(dow)){
+      const marches=filterByBudget(PLACES.marche||[]).filter(p=>p.start>=dayStart&&p.end<=dayEnd);
+      if(marches.length>0){const m=marches[0];schedule.push({...m,cat:'marche'});usedGlobal.push(m.name);}
+    }
+    // Brunch dominical (dim=0)
+    if(moments.includes('matin')&&dow===0){
+      const brunchs=filterByBudget(PLACES.brunch||[]).filter(p=>p.start>=dayStart&&p.end<=dayEnd);
+      if(brunchs.length>0){const b=brunchs[0];schedule.push({...b,cat:'brunch'});usedGlobal.push(b.name);}
+    }
+
+    // 2. Activités — 1 le matin + 1 l'après-midi
+    const allActCats=['culture','nature','plage','shopping','sport','bienetr','art','artisanat','insolite','excursion'];
+    const actCats=interests.filter(v=>allActCats.includes(v));
+    if(actCats.length===0){actCats.push('culture','nature');}
+
+    const hasMatin2 = moments.includes('matin')||moments.includes('full');
+    const hasApm2   = moments.includes('apm')  ||moments.includes('full');
+
+    function pickAct(slotFilter){
+      // Mélanger les catégories pour varier
+      const cats=[...actCats].sort(()=>Math.random()-0.5);
+      for(const cat of cats){
+        const pool=(PLACES[cat]||[]).filter(p=>{
+          if(usedGlobal.includes(p.name))return false;
+          if(!isInBudget(p))return false;
+          if(p.slot!==slotFilter)return false;
+          return true;
+        });
+        if(pool.length>0){
+          const pick=pool[Math.floor(Math.random()*pool.length)];
+          usedGlobal.push(pick.name);
+          return {...pick,cat};
+        }
+      }
+      return null;
+    }
+
+    // Activité matin
+    if(hasMatin2){
+      const act=pickAct('matin');
+      if(act)schedule.push(act);
+    }
+    // Activité après-midi
+    if(hasApm2){
+      const act=pickAct('apm');
+      if(act)schedule.push(act);
+    }
+    // Activité soir (nightlife si sélectionné)
+    if(moments.includes('soir')||moments.includes('full')){
+      if(interests.includes('nightlife')){
+        const pool=(PLACES.nightlife||[]).filter(p=>!usedGlobal.includes(p.name)&&isInBudget(p));
+        if(pool.length>0){const pick=pool[Math.floor(Math.random()*pool.length)];schedule.push({...pick,cat:'nightlife'});usedGlobal.push(pick.name);}
+      }
+    }
+
+
+    // 3. DÉJEUNER — garanti si départ après 12h (ou pas dernier jour)
+    // Les restos midi ont leur créneau dédié 12h-14h, pas de vérif overlaps avec activités
+    if(!isLastDay || depMin > 720) {
+      const midiPool = filterByBudget(PLACES.restaurant_midi||[]);
+      if(midiPool.length > 0){
+        // Éviter de répéter le même resto sur plusieurs jours
+        const availMidi=midiPool.filter(p=>!usedGlobal.includes(p.name));
+        const pool2=availMidi.length>0?availMidi:midiPool;
+        const pick=pool2[(day-1)%pool2.length];
+        usedGlobal.push(pick.name);
+        schedule.push({...pick, cat:'restaurant_midi', start:720, end:840});
+      }
+    }
+
+    // 4. DÎNER — garanti sauf si dernier jour et départ avant 19h
+    // Les restos soir ont leur créneau dédié 19h30-22h, pas de vérif overlaps avec activités
+    if(!isLastDay || depMin > 1140) {
+      const soirPool = filterByBudget(PLACES.restaurant_soir||[]);
+      if(soirPool.length > 0){
+        // Éviter de répéter le même resto sur plusieurs jours
+        const availSoir=soirPool.filter(p=>!usedGlobal.includes(p.name));
+        const pool3=availSoir.length>0?availSoir:soirPool;
+        const pick=pool3[(day-1)%pool3.length];
+        usedGlobal.push(pick.name);
+        schedule.push({...pick, cat:'restaurant_soir', start:1170, end:1320});
+      }
+    }
+
+    // Trier par heure de début
+    schedule.sort((a,b)=>a.start-b.start);
+
+    if(schedule.length===0){
+      html+=`<div class="place-card"><div class="place-num">—</div><div class="place-body"><div class="place-name">${L==='fr'?'Journée libre':L==='en'?'Free day':'Día libre'}</div><div class="place-desc">${L==='fr'?'Profitez de Nice à votre rythme.':L==='en'?'Explore Nice at your own pace.':'Explore Niza a su ritmo.'}</div></div></div>`;
+    } else {
+      schedule.forEach((p,i)=>{
+        const cl=DT[L].q7.catLabels[p.cat]||'';
+        const timeStr=minToStr(p.start)+' – '+minToStr(p.end);
+        const isMidi=p.cat==='restaurant_midi',isSoir=p.cat==='restaurant_soir';
+        const cardStyle=isMidi?'border-left:3px solid var(--sand);':isSoir?'border-left:3px solid var(--bark);':p.cat==='marche'?'border-left:3px solid var(--sage);':p.cat==='brunch'?'border-left:3px solid var(--sky);':'';
+        html+=`<div class="place-card" style="${cardStyle}">
+          <div class="place-num">${i+1}</div>
+          <div class="place-body">
+            <div class="place-time">${timeStr}</div>
+            <div class="place-name">${p.name}</div>
+            ${cl?`<span class="place-cat">${cl}</span>`:''}
+            <div class="place-desc">${p.desc[L]}</div>
+            <div class="place-review">${p.review[L]}</div>
+            <div class="place-footer">
+              <div style="display:flex;align-items:center;gap:5px">
+                <span class="rating">${p.rating}</span>
+                <span class="travel-tag">${p.travel[L]}</span>
+              </div>
+              <a class="place-link" href="${p.link}" target="_blank">${p.ll[L]}</a>
+            </div>
+          </div>
+        </div>`;
+      });
+    }
+  }
+
+  html+=`<div class="tips-card"><div class="tips-label">${DT[L].tipsTitle}</div>`;
+  DT[L].tips.forEach(t=>html+=`<div class="tip-item"><div class="tip-dot"></div><div class="tip-text">${t}</div></div>`);
+  html+='</div>';
+  document.getElementById('dguide-body').innerHTML=html;
+  dShowScreen('ds-guide');
+}
+
+
+/* ── GÉNÉRATION PDF ──────────────────────────────────────────────────── */
 async function dDlPDF(){
   const L=DA.lang,btn=document.querySelector('.pdf-btn');
   btn.textContent='Génération en cours…';btn.disabled=true;
@@ -753,7 +1419,7 @@ async function dDlPDF(){
   // Liens croisés : artisanat+séjour>1j → Biot comme excursion prioritaire
   // excursion → max 1 par jour (journée entière)
   // famille → Parc Phoenix et activités adaptées enfants en priorité
-  const days=dur===0?1:Math.min(dur,5);
+  const days=dur===0?1:Math.min(dur+1,8); // nuits+1=jours
   const slotRanges={matin:{s:480,e:840},apm:{s:840,e:1140},soir:{s:1140,e:1440}};
 
   function isInMomentsPDF(p){if(p.slot==='midi')return true;if(p.slot==='soir'&&moments.includes('soir'))return true;if(p.slot==='matin'&&moments.includes('matin'))return true;if(p.slot==='apm'&&moments.includes('apm'))return true;return false;}
@@ -773,7 +1439,19 @@ async function dDlPDF(){
     // Titre jour
     doc.setFillColor(...forest);doc.roundedRect(14,y,182,7,1.5,1.5,'F');
     doc.setTextColor(...white);doc.setFont('helvetica','bold');doc.setFontSize(8.5);
-    doc.text(days===1?(L==='fr'?'Programme de la journée':L==='en'?'Day programme':'Programa del día'):`${DT[L].dayLabel} ${day}`,W/2,y+4.8,{align:'center'});
+    // Label jour avec date précise pour PDF
+    let dlPdf;
+    if(days===1){
+      dlPdf=L==='fr'?'Programme de la journée':L==='en'?'Day programme':'Programa del día';
+    } else {
+      const dayNamesPdf={fr:['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],en:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],es:['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado']};
+      const monthNamesPdf={fr:['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'],en:['January','February','March','April','May','June','July','August','September','October','November','December'],es:['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']};
+      const dowP=dayDate.getDay(),dayNumP=dayDate.getDate(),monthP=dayDate.getMonth();
+      const dnP=dayNamesPdf[L]||dayNamesPdf.fr;
+      const mnP=monthNamesPdf[L]||monthNamesPdf.fr;
+      dlPdf=L==='en'?`${dnP[dowP]}, ${mnP[monthP]} ${dayNumP}`:`${dnP[dowP]} ${dayNumP} ${mnP[monthP]}`;
+    }
+    doc.text(dlPdf,W/2,y+4.8,{align:'center'});
     y+=11;
 
     // Reconstituer le planning (même logique que JS)
@@ -790,7 +1468,7 @@ async function dDlPDF(){
     for(const cat of actCats){
       const pool=(PLACES[cat]||[]).filter(p=>{if(used.includes(p.name))return false;if(!isInBudgetPDF(p))return false;if(isFirstDay&&p.end<=dayStart)return false;if(isLastDay&&p.start>=dayEnd)return false;for(const s of schedule){if(overlaps(p,s))return false;}return true;});
       if(pool.length>0){const pick=pool[Math.floor(Math.random()*Math.min(pool.length,2))];schedule.push({...pick,cat});used.push(pick.name);}
-      if(schedule.filter(s=>!['restaurant_midi','restaurant_soir','marche','brunch'].includes(s.cat)).length>=3)break;
+      if(schedule.filter(s=>!['restaurant_midi','restaurant_soir','marche','brunch'].includes(s.cat)).length>=2)break;
     }
     if((moments.includes('matin')||moments.includes('apm'))&&dayStart<=780&&dayEnd>=780){
       const mp=filterByBudgetPDF(PLACES.restaurant_midi||[]).filter(p=>p.start>=dayStart&&p.end<=dayEnd&&!schedule.some(s=>overlaps(p,s)));
